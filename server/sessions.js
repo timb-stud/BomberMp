@@ -22,7 +22,7 @@ http.createServer(function(req, res){
 		console.log(json);
 		if(json.newGame){
 			var session = new Session(sessions.length);
-			sessions.add(session);
+			sessions.push(session);
 			res.writeHead(200, {
             	'Content-Type': 'text/plain',
             	'Access-Control-Allow-Origin' : '*'
