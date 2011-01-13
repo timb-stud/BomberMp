@@ -19,6 +19,7 @@ http.createServer(function(req, res){
 	console.log("req");
 	req.on("data", function(chunk){
 		var json = JSON.parse(chunk);
+		console.log(json);
 		if(json.newGame){
 			var session = new Session(sessions.length);
 			sessions.add(session);
