@@ -21,13 +21,13 @@ http.createServer(function(req, res){
 		var json = JSON.parse(chunk);
 		console.log(json);
 		if(json.newGame){
-			var session = new Session(sessions.length);
+			var session = new Session(123);
 			sessions.push(session);
 			res.writeHead(200, {
             	'Content-Type': 'text/plain',
             	'Access-Control-Allow-Origin' : '*'
         	});
-			res.end(session.id);
+			res.end("" + session.id);
 		}else{
 			if(json.poll){
 				session = getSession(json.sessionId);
