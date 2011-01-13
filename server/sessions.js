@@ -23,6 +23,10 @@ http.createServer(function(req, res){
 		if(json.newGame){
 			var session = new Session(sessions.length);
 			sessions.add(session);
+			res.writeHead(200, {
+            	'Content-Type': 'text/plain',
+            	'Access-Control-Allow-Origin' : '*'
+        	});
 			res.end(session.id);
 		}else{
 			if(json.poll){
