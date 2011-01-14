@@ -31,8 +31,6 @@ function joinHandler(data){
 }
 
 function join(){
-	uid = $("#uidBox").attr("value");
-	alert(uid);
 	var msg = JSON.stringify({	"uid": uid,
 								"sid": sid,
 								"type": "join"});
@@ -45,7 +43,6 @@ function sendHandler(data){
 
 function send(){
 	var message = $("#msgBox").attr("value");
-	alert(message);
 	var msg = JSON.stringify({	"type": "send",
 								"uid": uid,
 								"sid": sid,
