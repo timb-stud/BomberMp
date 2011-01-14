@@ -1,4 +1,4 @@
-var sessionId = 0;
+var sid = 0;
 var url = "url:8124";
 function init(){
 	var msg = JSON.stringify({"newGame": "1"});
@@ -7,9 +7,9 @@ function init(){
 
 function newGameHandler(data){
 	$("#status").html("new Game" + data);
-	sessionId = data;
+	sid = data;
 	var msg = JSON.stringify({	"poll": "1",
-								"sessionId": sessionId});
+								"sid": sid});
 	$.post(url, msg, pollHandler, "json");
 }
 

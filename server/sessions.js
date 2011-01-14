@@ -1,14 +1,19 @@
 var sessions = new Array();
-function getSession(id){
+function getSession(sid){
 	for(var session in sessions){
-		if(id == session.id){
+		if(id == session.sid){
 			return session;
 		}
 	}
 	return null;
-}
-Session = function(id){
-	this.id = id;
+};
+Session = function(){
+	var makeSid = function(){
+		min = 100;
+		max = 999;
+    	return( min + parseInt(Math.random() * ( max-min+1 )));
+	};
+	this.sid = makeSid();
 	this.player1Res = null;
 	this.player2Res = null;
 };
@@ -21,7 +26,7 @@ http.createServer(function(req, res){
 		var json = JSON.parse(chunk);
 		console.log(json);
 		if(json.newGame){
-			var session = new Session(123);
+			var session = new Session();
 			sessions.push(session);
 			res.writeHead(200, {
             	'Content-Type': 'text/plain',
@@ -30,7 +35,7 @@ http.createServer(function(req, res){
 			res.end("" + session.id);
 		}else{
 			if(json.poll){
-				session = getSession(json.sessionId);
+				session = getSession(json.sid);
 				switch(json.player){
 					case "1":
 						session.player1Res = res;
