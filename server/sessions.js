@@ -52,6 +52,7 @@ http.createServer(function(req, res){
 		switch(json.type){
 			case "newGame":
 					session = new Session(json.uid);
+					console.log("create Session: " + session.sid)
 					sessions.push(session);
 					res.writeHead(200, {
 						'Content-Type': 'text/plain',
