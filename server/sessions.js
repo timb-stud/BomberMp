@@ -68,6 +68,11 @@ http.createServer(function(req, res){
 			case "poll":
 					session = getSession(json.sid);
 					session.setRes(json.uid, res);
+					res.writeHead(200, {
+						'Content-Type': 'text/plain',
+						'Access-Control-Allow-Origin' : '*'
+					});
+					res.end("poll ok");
 					break;
 			case "send":
 					session = getSession(json.sid);
@@ -77,6 +82,11 @@ http.createServer(function(req, res){
 						'Access-Control-Allow-Origin' : '*'
 						});
 					response.end(json.msg);
+					res.writeHead(200, {
+						'Content-Type': 'text/plain',
+						'Access-Control-Allow-Origin' : '*'
+					});
+					res.end("send ok");
 					break;
 			default:
 					console.log("Wrong query Type:" + json.type);
