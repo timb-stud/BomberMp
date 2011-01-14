@@ -64,15 +64,15 @@ http.createServer(function(req, res){
 			case "join":
 					session = getSession(json.sid);
 					session.join(json.uid);
-					break;
-			case "poll":
-					session = getSession(json.sid);
-					session.setRes(json.uid, res);
 					res.writeHead(200, {
 						'Content-Type': 'text/plain',
 						'Access-Control-Allow-Origin' : '*'
 					});
-					res.end("poll ok");
+					res.end("join ok");
+					break;
+			case "poll":
+					session = getSession(json.sid);
+					session.setRes(json.uid, res);
 					break;
 			case "send":
 					session = getSession(json.sid);
