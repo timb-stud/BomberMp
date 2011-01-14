@@ -1,7 +1,7 @@
 var sessions = new Array();
 function getSession(sid){
 	for(var session in sessions){
-		if(id == session.sid){
+		if(sid == session.sid){
 			return session;
 		}
 	}
@@ -32,7 +32,7 @@ http.createServer(function(req, res){
             	'Content-Type': 'text/plain',
             	'Access-Control-Allow-Origin' : '*'
         	});
-			res.end("" + session.id);
+			res.end("" + session.sid);
 		}else{
 			if(json.poll){
 				session = getSession(json.sid);
