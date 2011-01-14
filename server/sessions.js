@@ -1,4 +1,5 @@
-var sessions = new Array();
+var sessions = [];
+
 function getSession(sid){
 	for(var session in sessions){
 		if(sid == session.sid){
@@ -6,29 +7,34 @@ function getSession(sid){
 		}
 	}
 	return null;
-};
+}
+
 Session = function(uid){
 	var makeSid = function(){
 		min = 100;
 		max = 999;
-    	return( min + parseInt(Math.random() * ( max-min+1 )));
+		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
 	var setRes = function(uid, res){
-		if(uid == this.uid1)
+		if(uid == this.uid1){
 			this.ures1 = res;
-		else
-			if(uid == this.uid2)
+		}else{
+			if(uid == this.uid2){
 				this.ures2 = res;
+			}
+		}
 	};
 	var getRes = function(uid){
-		if(uid == this.uid1)
+		if(uid == this.uid1){
 			return this.uid1;
-		if(uid == this.uid2)
+		}
+		if(uid == this.uid2){
 			return this.ures2;
+		}
 	};
 	var join = function(uid){
 		uid2 = uid;
-	}
+	};
 	this.sid = makeSid();
 	var uid1 = uid;
 	var uid2 = 0;
@@ -36,39 +42,39 @@ Session = function(uid){
 	var ures2 = null;
 };
 
-
 var http = require("http");
 http.createServer(function(req, res){
 	console.log("req");
 	req.on("data", function(chunk){
 		var json = JSON.parse(chunk);
+		var session = null;
 		console.log(json);
 		switch(json.type){
 			case "newGame":
-					var session = new Session(json.uid);
+					session = new Session(json.uid);
 					sessions.push(session);
 					res.writeHead(200, {
-           			 	'Content-Type': 'text/plain',
-         			   	'Access-Control-Allow-Origin' : '*'
-        			});
+						'Content-Type': 'text/plain',
+						'Access-Control-Allow-Origin' : '*'
+					});
 					res.end("" + session.sid);
 					break;
 			case "join":
-					var session = getSession(json.sid);
+					session = getSession(json.sid);
 					session.join(json.uid);
 					break;
 			case "poll":
-					var session = getSession(json.sid);
+					session = getSession(json.sid);
 					session.setRes(json.uid, res);
 					break;
 			case "send":
-					var session = getSession(json.sid);
-					var res = session.getRes(json.uid);
-					res.writeHead(200, {
-           			 	'Content-Type': 'text/plain',
-         			   	'Access-Control-Allow-Origin' : '*'
-        			});
-					res.end(json.msg);
+					session = getSession(json.sid);
+					var response = session.getRes(json.uid);
+					response.writeHead(200, {
+						'Content-Type': 'text/plain',
+						'Access-Control-Allow-Origin' : '*'
+						});
+					response.end(json.msg);
 					break;
 			default:
 					console.log("Wrong query Type:" + json.type);
