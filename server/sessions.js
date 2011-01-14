@@ -15,7 +15,7 @@ Session = function(uid){
 		max = 999;
 		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
-	var setRes = function(uid, res){
+	this.setRes = function(uid, res){
 		if(uid == this.uid1){
 			this.ures1 = res;
 		}else{
@@ -24,7 +24,7 @@ Session = function(uid){
 			}
 		}
 	};
-	var getRes = function(uid){
+	this.getRes = function(uid){
 		if(uid == this.uid1){
 			return this.uid1;
 		}
@@ -32,7 +32,7 @@ Session = function(uid){
 			return this.ures2;
 		}
 	};
-	var join = function(uid){
+	this.join = function(uid){
 		uid2 = uid;
 	};
 	this.sid = this.makeSid();
