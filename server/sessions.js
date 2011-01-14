@@ -7,15 +7,33 @@ function getSession(sid){
 	}
 	return null;
 };
-Session = function(){
+Session = function(uid){
 	var makeSid = function(){
 		min = 100;
 		max = 999;
     	return( min + parseInt(Math.random() * ( max-min+1 )));
 	};
+	var setRes = function(uid, res){
+		if(uid == this.uid1)
+			this.ures1 = res;
+		else
+			if(uid == this.uid2)
+				this.ures2 = res;
+	};
+	var getRes = function(uid){
+		if(uid == this.uid1)
+			return this.uid1;
+		if(uid == this.uid2)
+			return this.ures2;
+	};
+	var join = function(uid){
+		uid2 = uid;
+	}
 	this.sid = makeSid();
-	this.player1Res = null;
-	this.player2Res = null;
+	var uid1 = uid;
+	var uid2 = 0;
+	var ures1 = null;
+	var ures2 = null;
 };
 
 
@@ -27,7 +45,7 @@ http.createServer(function(req, res){
 		console.log(json);
 		switch(json.type){
 			case "newGame":
-					var session = new Session();
+					var session = new Session(json.uid);
 					sessions.push(session);
 					res.writeHead(200, {
            			 	'Content-Type': 'text/plain',
@@ -35,20 +53,22 @@ http.createServer(function(req, res){
         			});
 					res.end("" + session.sid);
 					break;
+			case "join":
+					var session = getSession(json.sid);
+					session.join(json.uid);
+					break;
 			case "poll":
 					var session = getSession(json.sid);
-						switch(json.player){
-							case "1":
-								session.player1Res = res;
-								break;
-							case "2":
-								session.player2Res = res;
-								break;
-						}
-				}
+					session.setRes(json.uid, res);
 					break;
 			case "send":
-					
+					var session = getSession(json.sid);
+					var res = session.getRes(json.uid);
+					res.writeHead(200, {
+           			 	'Content-Type': 'text/plain',
+         			   	'Access-Control-Allow-Origin' : '*'
+        			});
+					res.end(json.msg);
 					break;
 			default:
 					console.log("Wrong query Type:" + json.type);
