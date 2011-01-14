@@ -35,7 +35,7 @@ Session = function(uid){
 	this.join = function(uid){
 		uid2 = uid;
 	};
-	this.sid = this.makeSid();
+	this.sid = makeSid();
 	var uid1 = uid;
 	var uid2 = 0;
 	var ures1 = null;
