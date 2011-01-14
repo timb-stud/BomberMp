@@ -1,12 +1,13 @@
 var sessions = [];
 
 function getSession(sid){
-	for(var session in sessions){
-		if(sid == session.sid){
-			return session;
-		}
-	}
-	return null;
+	return sessions[0];
+//	for(var session in sessions){
+//		if(sid == session.sid){
+//			return session;
+//		}
+//	}
+//	return null;
 }
 
 Session = function(uid){

@@ -31,6 +31,7 @@ function joinHandler(data){
 }
 
 function join(){
+	sid = $("#sidBox").attr("value");
 	var msg = JSON.stringify({	"uid": uid,
 								"sid": sid,
 								"type": "join"});
