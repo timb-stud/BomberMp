@@ -27,7 +27,7 @@ Session = function(uid){
 	};
 	this.getRes = function(uid){
 		if(uid == this.uid1){
-			return this.uid1;
+			return this.ures1;
 		}
 		if(uid == this.uid2){
 			return this.ures2;
