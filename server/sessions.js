@@ -45,7 +45,7 @@ Session = function(uid){
 
 var http = require("http");
 http.createServer(function(req, res){
-	console.log("req");
+	console.log("HTTP START");
 	req.on("data", function(chunk){
 		var json = JSON.parse(chunk);
 		var session = null;
@@ -92,6 +92,7 @@ http.createServer(function(req, res){
 					console.log("Wrong query Type:" + json.type);
 					break;
 		}
+		console.log("HTTP END");
 	});	
 }).listen(8124);
 
