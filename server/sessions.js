@@ -3,11 +3,11 @@ var SessionList = {
 	addSession: function(){
 		var sid = this.generateSid();
 		var session = new Session(sid);
-		sessions.push(session);
+		this.sessions.push(session);
 		return session;
 	},
 	getSession: function(sid){
-		for(var session in sessions){
+		for(var session in this.sessions){
 			if(session.sid == sid){
 				return session;
 			}
