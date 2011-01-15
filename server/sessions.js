@@ -1,7 +1,7 @@
 var SessionList = {
 	sessions: new Array(),
 	addSession: function(){
-		var sid = this.gerateSid();
+		var sid = this.generateSid();
 		var session = new Session(sid);
 		sessions.push(session);
 		return session;
