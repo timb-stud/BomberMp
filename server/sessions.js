@@ -17,20 +17,20 @@ Session = function(uid){
 		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
 	this.setRes = function(uid, res){
-		if(uid == this.uid1){
-			this.ures1 = res;
+		if(uid == uid1){
+			ures1 = res;
 		}else{
-			if(uid == this.uid2){
-				this.ures2 = res;
+			if(uid == uid2){
+				ures2 = res;
 			}
 		}
 	};
 	this.getRes = function(uid){
-		if(uid == this.uid1){
-			return this.ures1;
+		if(uid == uid1){
+			return ures1;
 		}
-		if(uid == this.uid2){
-			return this.ures2;
+		if(uid == uid2){
+			return ures2;
 		}
 	};
 	this.join = function(uid){
