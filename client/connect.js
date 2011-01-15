@@ -1,5 +1,5 @@
 var sid = 0;
-var uid = parseInt(Math.random() * 1000);
+var pid = 0;
 var url = "url:8124";
 
 function pollHandler(data){
@@ -8,33 +8,32 @@ function pollHandler(data){
 
 function poll(){
 	var msg = JSON.stringify({	"type": "poll",
-								"uid": uid,
+								"pid": pid,
 								"sid": sid});
 	$.post(url, msg, pollHandler, "json");
 }
 
-function newGameHandler(data){
-	$("#status").html("new Game" + data);
-	sid = data;
-	poll();
+function newSessionHandler(data){
+	$("#status").html("new Session" + data);
+	var json = JSON.parse(data);
+	sid = json.sid;
+	pid = json.pid;
 }
 
-function newGame(){
-	var msg = JSON.stringify({	"uid": uid,
-								"type": "newGame"});
-	$.post(url, msg, newGameHandler, "json");
+function newSession(){
+	var msg = JSON.stringify({"type": "newSession"});
+	$.post(url, msg, newSessionHandler, "json");
 }
 
 function joinHandler(data){
+	var json = JSON.parse(data);
+	pid = json.pid;
 	$("#status").html($("#status").html() + "<br>Join: " + data);
-	poll();
 }
 
-function join(){
+function joinSession(){
 	sid = $("#sidBox").attr("value");
-	var msg = JSON.stringify({	"uid": uid,
-								"sid": sid,
-								"type": "join"});
+	var msg = JSON.stringify({"sid": sid, "type": "joinSession"});
 	$.post(url, msg, joinHandler, "json");
 }
 
@@ -45,7 +44,7 @@ function sendHandler(data){
 function send(){
 	var message = $("#msgBox").attr("value");
 	var msg = JSON.stringify({	"type": "send",
-								"uid": uid,
+								"pid": pid,
 								"sid": sid,
 								"msg": message});
 	$.post(url, msg, sendHandler, "json");

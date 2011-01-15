@@ -1,96 +1,120 @@
-var sessions = [];
+var SessionList = {
+	sessions: new Array(),
+	addSession: function(){
+		var sid = this.gerateSid();
+		var session = new Session(sid);
+		sessions.push(session);
+		return session;
+	},
+	getSession: function(sid){
+		for(var session in sessions){
+			if(session.sid == sid){
+				return session;
+			}
+		}
+	},
+	generateSid: function(){
+		min = 1000;
+		max = 9999;
+		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
+	}
+};
 
-function getSession(sid){
-	return sessions[0];
-//	for(var session in sessions){
-//		if(sid == session.sid){
-//			return session;
-//		}
-//	}
-//	return null;
-}
-
-Session = function(uid){
-	var makeSid = function(){
+Session = function(sid){
+	this.sid = sid;
+	this.players = new Array();
+	this.addPlayer= function(){
+		var pid = generatePid();
+		var player = new Player(pid);
+		this.players.push(player);
+		return player;
+	};
+	this.getPlayer = function(pid){
+		for(var player in players){
+			if(player.pid == pid){
+				return player;
+			}
+		}
+	};
+	this.alertPlayers = function(msg, pid){
+		for(var player in players){
+			if(player.pid != pid){
+				var res = player.response;
+				res.writeHead(200, {'Content-Type': 'text/plain',
+									'Access-Control-Allow-Origin' : '*'});
+				res.end(msg);
+				player.response = null;
+			}
+		}
+	};
+	var generatePid = function(){
 		min = 100;
 		max = 999;
 		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
-	this.setRes = function(uid, res){
-		if(uid == uid1){
-			ures1 = res;
-		}else{
-			if(uid == uid2){
-				ures2 = res;
-			}
+};
+
+Player = function(pid){
+	this.pid = pid;
+	this.response = null;
+};
+
+var SessionManager = {
+	newSession: function(){
+		var session = SessionList.addSession();
+		var player = session.addPlayer();
+		return JSON.stringify({"sid": session.sid, "pid": player.pid});
+	},
+	joinSession: function(sid){
+		var session = SessionList.getSession(sid);
+		var player = session.addPlayer();
+		return JSON.stringify({"pid": player.pid});
+	},
+	poll: function(sid, pid, res){
+		var session = SessionList.getSession(sid);
+		var player = session.getPlayer(pid);
+		player.response = res;
+	},
+	send: function(sid, pid, msg){
+		var session = SessionList.getSession(sid);
+		session.alertPlayers(msg, pid);
+		return msg;
+	},
+	handle: function(req, res, chunk){
+		var json = JSON.parse(chunk);
+		var msg = null;
+		switch(json.type){
+			case "newSession":
+					msg = this.newSession();
+					break;
+			case "joinSession":
+					msg = this.joinSession(json.sid);
+					break;
+			case "poll":
+					this.poll(json.sid, json.pid, res);
+					break;
+			case "send":
+					msg = this.send(json.sid, json.pid, json.msg);
+					break;
+			default:
+					console.log("Wrong query Type:" + json.type);
+					break;
 		}
-	};
-	this.getRes = function(uid){
-		if(uid == uid1){
-			return ures1;
-		}
-		if(uid == uid2){
-			return ures2;
-		}
-	};
-	this.join = function(uid){
-		uid2 = uid;
-	};
-	this.sid = makeSid();
-	var uid1 = uid;
-	var uid2 = 0;
-	var ures1 = null;
-	var ures2 = null;
+		return msg;
+	}
 };
 
 var http = require("http");
 http.createServer(function(req, res){
 	console.log("HTTP START");
 	req.on("data", function(chunk){
-		var json = JSON.parse(chunk);
-		var session = null;
-		console.log(json);
-		switch(json.type){
-			case "newGame":
-					session = new Session(json.uid);
-					console.log("create Session: " + session.sid)
-					sessions.push(session);
-					res.writeHead(200, {
-						'Content-Type': 'text/plain',
-						'Access-Control-Allow-Origin' : '*'
-					});
-					res.end("" + session.sid);
-					break;
-			case "join":
-					session = getSession(json.sid);
-					session.join(json.uid);
-					res.writeHead(200, {
-						'Content-Type': 'text/plain',
-						'Access-Control-Allow-Origin' : '*'
-					});
-					res.end("join ok");
-					break;
-			case "poll":
-					session = getSession(json.sid);
-					session.setRes(json.uid, res);
-					break;
-			case "send":
-					session = getSession(json.sid);
-					var response = session.getRes(json.uid);
-					response.writeHead(200, {
-						'Content-Type': 'text/plain',
-						'Access-Control-Allow-Origin' : '*'
-						});
-					response.end(json.msg);
-					res.writeHead(200, {
-						'Content-Type': 'text/plain',
-						'Access-Control-Allow-Origin' : '*'
-					});
-					res.end("send ok");
-					break;
-			default:
-					console.log("Wrong query Type:" + json.type);
-					break;
+		var msg = SessionManager.handle(req, res, chunk);
+		if(msg){
+			res.writeHead(200, {
+				'Content-Type': 'text/plain',
+				'Access-Control-Allow-Origin' : '*'
+			});
+			res.end(msg);
 		}
 		console.log("HTTP END");
 	});	
