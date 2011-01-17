@@ -110,6 +110,7 @@ var http = require("http");
 http.createServer(function(req, res){
 	console.log("HTTP START");
 	req.on("data", function(chunk){
+		console.log("chunk: " + chunk);
 		var msg = SessionManager.handle(req, res, chunk);
 		if(msg){
 			res.writeHead(200, {
