@@ -14,10 +14,9 @@ function poll(){
 }
 
 function newSessionHandler(data){
-	$("#status").html("new Session" + data);
-	var json = JSON.parse(data);
-	sid = json.sid;
-	pid = json.pid;
+	sid = data.sid;
+	pid = data.pid;
+	$("#status").html("new Session: " + JSON.stringify(data));
 }
 
 function newSession(){
@@ -25,16 +24,15 @@ function newSession(){
 	$.post(url, msg, newSessionHandler, "json");
 }
 
-function joinHandler(data){
-	var json = JSON.parse(data);
-	pid = json.pid;
-	$("#status").html($("#status").html() + "<br>Join: " + data);
+function joinSessionHandler(data){
+	pid = data.pid;
+	$("#status").html($("#status").html() + "<br>Join: " + JSON.stringify(data));
 }
 
 function joinSession(){
 	sid = $("#sidBox").attr("value");
 	var msg = JSON.stringify({"sid": sid, "type": "joinSession"});
-	$.post(url, msg, joinHandler, "json");
+	$.post(url, msg, joinSessionHandler, "json");
 }
 
 function sendHandler(data){
