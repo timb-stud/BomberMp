@@ -1,5 +1,5 @@
 var SessionList = {
-	sessions: new Array(),
+	sessions: [],
 	addSession: function(){
 		var sid = this.generateSid();
 		var session = new Session(sid);
@@ -7,9 +7,9 @@ var SessionList = {
 		return session;
 	},
 	getSession: function(sid){
-		for(var i=0; i<sessions.length; i++){
-			if(sessions[i].sid == sid){
-				return session;
+		for(var i=0; i<this.sessions.length; i++){
+			if(this.sessions[i].sid == sid){
+				return this.sessions[i];
 			}
 		}
 		return null;
@@ -23,7 +23,7 @@ var SessionList = {
 
 Session = function(sid){
 	this.sid = sid;
-	this.players = new Array();
+	this.players = [];
 	this.addPlayer= function(){
 		var pid = generatePid();
 		var player = new Player(pid);
@@ -31,21 +31,21 @@ Session = function(sid){
 		return player;
 	};
 	this.getPlayer = function(pid){
-		for(var i=0; i<players.length; i++){
-			if(players[i].pid == pid){
-				return player;
+		for(var i=0; i < this.players.length; i++){
+			if(this.players[i].pid == pid){
+				return this.players[i];
 			}
 		}
 		return null;
 	};
 	this.alertPlayers = function(msg, pid){
-		for(var i=0; i < players.length; i++){
-			if(players[i].pid != pid){
-				var res = players[i].response;
+		for(var i=0; i < this.players.length; i++){
+			if(this.players[i].pid != pid){
+				var res = this.players[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
 				res.end(msg);
-				players[i].response = null;
+				this.players[i].response = null;
 			}
 		}
 	};
