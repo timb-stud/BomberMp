@@ -7,11 +7,12 @@ var SessionList = {
 		return session;
 	},
 	getSession: function(sid){
-		for(var session in this.sessions){
-			if(session.sid == sid){
+		for(var i=0; i<sessions.length; i++){
+			if(sessions[i].sid == sid){
 				return session;
 			}
 		}
+		return null;
 	},
 	generateSid: function(){
 		min = 1000;
@@ -30,20 +31,21 @@ Session = function(sid){
 		return player;
 	};
 	this.getPlayer = function(pid){
-		for(var player in players){
-			if(player.pid == pid){
+		for(var i=0; i<players.length; i++){
+			if(players[i].pid == pid){
 				return player;
 			}
 		}
+		return null;
 	};
 	this.alertPlayers = function(msg, pid){
-		for(var player in players){
-			if(player.pid != pid){
-				var res = player.response;
+		for(var i=0; i < players.length; i++){
+			if(players[i].pid != pid){
+				var res = players[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
 				res.end(msg);
-				player.response = null;
+				players[i].response = null;
 			}
 		}
 	};
