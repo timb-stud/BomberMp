@@ -41,6 +41,7 @@ Session = function(sid){
 	this.alertPlayers = function(msg, pid){
 		for(var i=0; i < this.players.length; i++){
 			if(this.players[i].pid != pid){
+				console.log("pid: " + players[i].pid +  " res: " + players[i].response);
 				var res = this.players[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
