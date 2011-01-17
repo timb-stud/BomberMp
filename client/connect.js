@@ -3,7 +3,7 @@ var pid = 0;
 var url = "url:8124";
 
 function pollHandler(data){
-	$("#status").html($("#status").html() + "<br>Poll: " + data);
+	$("#status").html($("#status").html() + "<br>Poll: " + JSON.stringify(data));
 }
 
 function poll(){

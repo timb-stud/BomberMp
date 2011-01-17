@@ -41,11 +41,12 @@ Session = function(sid){
 	this.alertPlayers = function(msg, pid){
 		for(var i=0; i < this.players.length; i++){
 			if(this.players[i].pid != pid){
+				var json = JSON.stringify({"msg" : msg});
 				console.log("pid: " + this.players[i].pid +  " res: " + this.players[i].response);
 				var res = this.players[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
-				res.end(msg);
+				res.end(json);
 				this.players[i].response = null;
 			}
 		}
