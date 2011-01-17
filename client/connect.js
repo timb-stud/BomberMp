@@ -17,6 +17,7 @@ function newSessionHandler(data){
 	sid = data.sid;
 	pid = data.pid;
 	$("#status").html("new Session: " + JSON.stringify(data));
+	poll();
 }
 
 function newSession(){
