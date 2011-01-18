@@ -1,9 +1,10 @@
 var sid = 0;
 var pid = 0;
-var url = "url:8124";
+var url = "http://localhost:8124";
 
 function pollHandler(data){
 	$("#status").html($("#status").html() + "<br>Poll: " + JSON.stringify(data));
+	poll();
 }
 
 function poll(){
