@@ -1,12 +1,12 @@
-Session = function(url, msgHandler){
-	this.url = url;
-	this.msgHandler = msgHandler;
-	var sid = 0,
+Session = function(serverUrl, messageHandler){
+	var url = serverUrl,
+		msgHandler = messageHandler,
+		sid = 0,
 		uid = 0;
 	var pollHandler = function(data){
 		console.log("pollHandler", data);
 		if(data.msg){
-			this.msgHandler(data.msg);
+			msgHandler(data.msg);
 		}
 		poll();
 	};
@@ -14,7 +14,8 @@ Session = function(url, msgHandler){
 		var ajaxMsg = JSON.stringify({	"type": "poll",
 										"sid": sid,
 										"pid": uid});
-		$.post(this.url, ajaxMsg, pollHandler, "json");
+		console.log(sid,uid, ajaxMsg);
+		$.post(url, ajaxMsg, pollHandler, "json");
 	};
 	var createHandler = function(data){
 		console.log("createHandler", data);
@@ -24,18 +25,18 @@ Session = function(url, msgHandler){
 	};
 	this.create = function(){
 		var ajaxMsg = JSON.stringify({"type": "newSession"});
-		$.post(this.url, ajaxMsg, createHandler, "json");
+		$.post(url, ajaxMsg, createHandler, "json");
 	};
 	var joinHandler = function(data){
 		console.log("joinHandler", data);
-		var uid = data.pid;
+		uid = data.pid;
 		poll();
 	};
 	this.join = function(sessionId){
 		sid = sessionId;
 		var ajaxMsg = JSON.stringify({	"type": "joinSession",
 										"sid": sid});
-		$.post(this.url, ajaxMsg, joinHandler, "json");
+		$.post(url, ajaxMsg, joinHandler, "json");
 	};
 	var sendHandler = function(data){
 		console.log("sendHandler", data);
@@ -43,8 +44,8 @@ Session = function(url, msgHandler){
 	this.send = function(msg){
 		var ajaxMsg = JSON.stringify({	"type": "send",
 										"sid": sid,
-										"pid": pid,
+										"pid": uid,
 										"msg": msg});
-		$.post(this.url, ajaxMsg, sendHandler, "json");
+		$.post(url, ajaxMsg, sendHandler, "json");
 	};
 };
