@@ -1,6 +1,7 @@
-Session = function(serverUrl, messageHandler){
+Session = function(serverUrl, initialisedHandler, messageHandler){
 	var url = serverUrl,
 		msgHandler = messageHandler,
+		initHandler = initialisedHandler,
 		sid = 0,
 		uid = 0;
 	var pollHandler = function(data){
@@ -21,6 +22,7 @@ Session = function(serverUrl, messageHandler){
 		console.log("createHandler", data);
 		sid = data.sid;
 		uid = data.pid;
+		initHandler(uid, sid);
 		poll();
 	};
 	this.create = function(){
@@ -30,6 +32,7 @@ Session = function(serverUrl, messageHandler){
 	var joinHandler = function(data){
 		console.log("joinHandler", data);
 		uid = data.pid;
+		intiHandler(uid, sid);
 		poll();
 	};
 	this.join = function(sessionId){
