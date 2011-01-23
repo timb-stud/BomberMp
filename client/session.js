@@ -32,7 +32,7 @@ Session = function(serverUrl, initialisedHandler, messageHandler){
 	var joinHandler = function(data){
 		console.log("joinHandler", data);
 		uid = data.pid;
-		intiHandler(uid, sid);
+		initHandler(uid, sid);
 		poll();
 	};
 	this.join = function(sessionId){
@@ -51,4 +51,9 @@ Session = function(serverUrl, initialisedHandler, messageHandler){
 										"msg": msg});
 		$.post(url, ajaxMsg, sendHandler, "json");
 	};
+	this.getJoinUrl = function(){
+		var url = window.location.href;
+		url += "?sid=" + sid;
+		return url;
+	}
 };

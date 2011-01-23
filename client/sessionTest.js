@@ -2,7 +2,7 @@ var url = "http://localhost:8124",
 	session = null;
 
 function init(){
-	session = new Session(url, msgHandler);
+	session = new Session(url, initHandler, msgHandler);
 	var sid = getSidFromUrl();
 	if(sid){
 		session.join(sid);
@@ -20,6 +20,11 @@ function getSidFromUrl(){
 		return sid;
 }
 
+function initHandler(uid, sid){
+	console.log("initHandler", uid, sid, session.getJoinUrl());
+	$("#urlBox").attr("value", session.getJoinUrl());
+}
+
 function msgHandler(msg){
 	console.log("msgHandler", msg);
 }
@@ -27,7 +32,6 @@ function msgHandler(msg){
 
 function newSession(){
 	session.create();
-	console.log(window.location.href + "?sid=" + session.getSid());
 }
 
 function joinSession(){
