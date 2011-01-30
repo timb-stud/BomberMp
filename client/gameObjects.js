@@ -22,7 +22,7 @@ var Wall = function(x,y){
 	};
 };
 
-var Bomb = function(x, y, radius){
+var Bomb = function(x, y, radius, walls){
 	this.w = 20;
 	this.h = 20;
 	this.x = x;
@@ -35,15 +35,11 @@ var Bomb = function(x, y, radius){
 	};
 	this.explode = function(){
 		for(i=1; i <= radius;i++){
-			playground.remove(x + i, y);
-			playground.remove(x - i, y);
-			playground.remove(x, y + i);
-			playground.remove(x, y - i);
-			playground.remove(x, y);
+			
 		}
 	};
 	this.draw = function(ctx){
-		drawRect(ctx, "#FF0000", x * w, y * h, w, h);
+		drawRect(ctx, "#FF0000", this.x, this.y, this.w, this.h);
 	};
 };
 
@@ -97,7 +93,7 @@ var Player = function(x, y, walls){
 		this.moveTo(this.x + 1, this.y);
 	};
 	this.dropBomb = function(){
-		bomb = new Bomb(playground, this.x, this.y, bombRadius);
+		bomb = new Bomb(this.x, this.y, bombRadius, walls);
 		setTimeout(this.explodeBomb, bombTimer);
 	};
 	this.explodeBomb = function(){
