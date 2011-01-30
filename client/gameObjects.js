@@ -1,62 +1,29 @@
 function drawRect(ctx, fillStyle , x, y, w, h){
-	ctx.fillStyle = fillStyle;
-	ctx.beginPath();
-	ctx.rect(x, y, w, h);
-	ctx.closePath();
-	ctx.fill();
-}
-
-var Wall = function(x,y){
-	this.x = x;
-	this.y = y;
-	this.w = 20;
-	this.h = 20;
+		ctx.fillStyle = fillStyle;
+		ctx.beginPath();
+		ctx.rect(x, y, w, h);
+		ctx.closePath();
+		ctx.fill();
+	};
+var GameObject = function(x, y, w, h){
+	this.constructor = function(x, y, w, h){
+		this.x = x;
+		this.y = y;
+		this.w = w || 20;
+		this.h = h || 20;
+	};
+	this.constructor(x,y,w,h);
+	this.drawRect = function(ctx, fillStyle , x, y, w, h){
+		ctx.fillStyle = fillStyle;
+		ctx.beginPath();
+		ctx.rect(x, y, w, h);
+		ctx.closePath();
+		ctx.fill();
+	};
 	this.isLeftOf = function(go){
 		return this.x + this.w < go.x;
 	};
 		this.isAbove = function(go){
-		return this.y + this.h < go.y;
-	};
-	this.draw = function(ctx){
-		drawRect(ctx, "#8B4513", this.x, this.y, this.w, this.h);
-	};
-};
-
-var Bomb = function(x, y, radius, walls){
-	this.w = 20;
-	this.h = 20;
-	this.x = x;
-	this.y = y;
-	this.isLeftOf = function(go){
-		return this.x + this.w < go.x;
-	};
-		this.isAbove = function(go){
-		return this.y + this.h < go.y;
-	};
-	this.explode = function(){
-		for(i=1; i <= radius;i++){
-			
-		}
-	};
-	this.draw = function(ctx){
-		drawRect(ctx, "#FF0000", this.x, this.y, this.w, this.h);
-	};
-};
-
-var Player = function(x, y, walls){
-	this.x = x;
-	this.y = y;
-	this.w = 20;
-	this.h = 20;
-	var bomb = null,
-		bombRadius = 2,
-		bombTimer = 2000,
-		steps = 2 ;
-	
-	this.isLeftOf = function(go){
-		return this.x + this.w < go.x;
-	};
-	this.isAbove = function(go){
 		return this.y + this.h < go.y;
 	};
 	this.touches = function(go){
@@ -66,6 +33,36 @@ var Player = function(x, y, walls){
 		if(go.isAbove(this)){	return false;}
 		return true;
 	};
+}
+
+var Wall = function(x, y){
+	this.constructor(x, y);
+	this.draw = function(ctx){
+		this.drawRect(ctx, "#8B4513", this.x, this.y, this.w, this.h);
+	};
+};
+Wall.prototype = new GameObject;
+
+var Bomb = function(x, y, radius, walls){
+	this.constructor(x, y);
+	this.radius = radius;
+	this.explode = function(){
+		for(i=1; i <= radius;i++){
+			
+		}
+	};
+	this.draw = function(ctx){
+		this.drawRect(ctx, "#FF0000", this.x, this.y, this.w, this.h);
+	};
+};
+Bomb.prototype = new GameObject;
+
+var Player = function(x, y, walls){
+	this.constructor(x, y);
+	var bomb = null,
+		bombRadius = 2,
+		bombTimer = 2000,
+		steps = 2 ;
 	this.moveTo = function(x,y){
 		var xTmp = this.x,
 			yTmp = this.y;
@@ -101,9 +98,10 @@ var Player = function(x, y, walls){
 		bomb = null;
 	};
 	this.draw = function(ctx){
-		drawRect(ctx, "#97FFFF", this.x, this.y, this.w, this.h);
+		this.drawRect(ctx, "#97FFFF", this.x, this.y, this.w, this.h);
 		if(bomb){
 			bomb.draw(ctx);
 		}
 	};
 };
+Player.prototype = new GameObject;
