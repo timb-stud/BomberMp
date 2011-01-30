@@ -47,8 +47,15 @@ var Bomb = function(x, y, radius, walls){
 	this.constructor(x, y);
 	this.radius = radius;
 	this.explode = function(){
-		for(i=1; i <= radius;i++){
-			
+		var goH = new GameObject(this.x - (this.radius * this.w) , this.y, this.w * ((this.radius * 2) + 1), this.h),
+			goV = new GameObject(this.x, this.y - (this.radius * this.h), this.w, this.h * ((this.radius * 2) + 1));
+		for(i=0; i<walls.length; i++){
+			if(goH.touches(walls[i])){
+				walls.splice(i,1);
+			}
+			if(goV.touches(walls[i])){
+				walls.spilce(i,1);
+			}
 		}
 	};
 	this.draw = function(ctx){
