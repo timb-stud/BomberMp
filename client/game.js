@@ -53,7 +53,10 @@ function init(){
     walls.push(new Wall(50, 50));
     walls.push(new Wall(50, 70));
     walls.push(new Wall(50, 90));
-    walls.push(new Wall(70, 70));
+    walls.push(new Wall(70, 90));
+    walls.push(new Wall(90, 90));
+    walls.push(new Wall(90, 70));
+    walls.push(new Wall(90, 50));
     player = new Player(3, 3, walls);
     setInterval(mainLoop, 10);
 }
