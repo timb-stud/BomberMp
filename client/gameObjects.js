@@ -15,10 +15,10 @@ var GameObject = function(x, y, w, h, color){
 		this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
 	};
 	this.isLeftOf = function(go){
-		return this.x + this.w < go.x;
+		return this.x + this.w <= go.x;
 	};
 	this.isAbove = function(go){
-		return this.y + this.h < go.y;
+		return this.y + this.h <= go.y;
 	};
 	this.touches = function(go){
 		if (this.isLeftOf(go)) {
