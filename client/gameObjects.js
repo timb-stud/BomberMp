@@ -1,10 +1,3 @@
-function drawRect(ctx, fillStyle, x, y, w, h){
-    ctx.fillStyle = fillStyle;
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-    ctx.closePath();
-    ctx.fill();
-};
 var GameObject = function(x, y, w, h, color){
     this.constructor = function(x, y, w, h){
         this.x = x;
