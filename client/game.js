@@ -1,5 +1,3 @@
-var w;
-var h;
 var ctx,
 	w,
 	h,
@@ -31,6 +29,7 @@ $(document).keydown(onKeyDown);
 $(document).keyup(onKeyUp);
 
 function mainLoop(){
+	player.animate();
     ctx.clearRect(0, 0, w, h);
     for(i=0; i< walls.length; i++){
 		walls[i].draw(ctx);
