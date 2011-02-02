@@ -56,7 +56,7 @@ function init(){
     walls.push(new Wall(50, 90));
     walls.push(new Wall(70, 70));
     player = new Player(3, 3, walls);
-    setInterval(mainLoop, 30);
+    setInterval(mainLoop, 10);
 }
 
 $(document).ready(init);
