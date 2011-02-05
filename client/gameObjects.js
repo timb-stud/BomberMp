@@ -43,11 +43,17 @@ var Wall = function(x, y){
 	this.w = 20;
 	this.h = 20;
 	this.color = "#8B4513";
-	this.draw = function(ctx){
-		this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
-	};
 };
 Wall.prototype = new GameObject;
+
+var SpawnPoint = function(x, y){
+	this.x = x;
+	this.y = y;
+	this.w = 20;
+	this.h = 20;
+	this.color = "#FF7F50";
+};
+SpawnPoint.prototype = new GameObject;
 
 var Bomb = function(x, y, radius, walls){
 	this.x = x;
@@ -62,24 +68,52 @@ var Bomb = function(x, y, radius, walls){
 	var rightRect = new GameObject(this.x + this.w, this.y, 0, this.h, this.color);
 	var upperRect = new GameObject(this.x, this.y, this.w, 0, this.color);
 	var lowerRect = new GameObject(this.x, this.y + this.h, this.w, 0, this.color);
+	leftRect.active = true;
+	rightRect.active = true;
+	upperRect.active = true;
+	lowerRect.active = true;
 	var exploded = false;
 	this.explode = function(){
 		exploded = true;
 	};
 	this.animate = function(){
 		if(exploded){
-			if(leftRect.w < this.wMax){
+			if(leftRect.w < this.wMax && leftRect.active){
+				for(i=0;i<walls.length;i++){
+					if(leftRect.touches(walls[i])){
+						walls.splice(i, 1);
+						leftRect.active = false;
+					}
+				}
 				leftRect.w++;
 				leftRect.x--;
 			}
-			if(rightRect.w < this.wMax){
+			if(rightRect.w < this.wMax && rightRect.active){
+				for(i=0;i<walls.length;i++){
+					if(rightRect.touches(walls[i])){
+						walls.splice(i, 1);
+						rightRect.active = false;
+					}
+				}
 				rightRect.w++;
 			}
-			if(upperRect.h < this.hMax){
+			if(upperRect.h < this.hMax && upperRect.active){
+				for(i=0;i<walls.length;i++){
+					if(upperRect.touches(walls[i])){
+						walls.splice(i, 1);
+						upperRect.active = false;
+					}
+				}
 				upperRect.h++;
 				upperRect.y--;
 			}
-			if(lowerRect.h < this.hMax){
+			if(lowerRect.h < this.hMax && lowerRect.active){
+				for(i=0;i<walls.length;i++){
+					if(lowerRect.touches(walls[i])){
+						walls.splice(i, 1);
+						lowerRect.active = false;
+					}
+				}
 				lowerRect.h++;
 			}
 		}
