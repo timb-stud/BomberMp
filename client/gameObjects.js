@@ -141,7 +141,6 @@ var Player = function(x, y, walls){
 		this.y = y;
 		for (i = 0; i < walls.length; i++) {
 			if (this.touches(walls[i])) {
-				console.log("touches");
 				this.x = xTmp;
 				this.y = yTmp;
 				return;
