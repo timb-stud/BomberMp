@@ -72,6 +72,9 @@ var SessionManager = {
 	joinSession: function(sid){
 		var session = SessionList.getSession(sid);
 		var player = session.addPlayer();
+		var msg = {action: "join", pid: player.pid};
+		msg = JSON.stringify(msg);
+		SessionManager.send(sid, player.pid, msg);
 		return JSON.stringify({"pid": player.pid});
 	},
 	poll: function(sid, pid, res){

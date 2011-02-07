@@ -6,6 +6,10 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		console.log("pollHandler", data);
 		if(data.msg){
 			msgHandler(data.msg);
+		}else{
+			if(data.action){
+				userHandler(data.action, data.pid);
+			}
 		}
 		poll();
 	};
