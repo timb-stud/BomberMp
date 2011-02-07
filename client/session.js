@@ -1,7 +1,5 @@
-Session = function(serverUrl, initialisedHandler, messageHandler){
+Session = function(serverUrl, initHandler, msgHandler, userHandler){
 	var url = serverUrl,
-		msgHandler = messageHandler,
-		initHandler = initialisedHandler,
 		sid = 0,
 		uid = 0;
 	var pollHandler = function(data){
