@@ -5,7 +5,7 @@ var GameSession = {
 		this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
 		var sid = this.getSidFromUrl(),
 			sp1 = new SpawnPoint(0,0),
-			sp1 = new SpawnPoint(180,180);
+			sp2 = new SpawnPoint(180,180);
 			
 		if(sid){
 			Game.spawnPoint1 = sp2;
