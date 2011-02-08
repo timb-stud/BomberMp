@@ -72,8 +72,8 @@ var Game = {
 		Game.walls.push(new Wall(90, 90));
 		Game.walls.push(new Wall(90, 70));
 		Game.walls.push(new Wall(90, 50));
-		Game.player1 = new Player(sp1, Game.walls);
-		Game.player2 = new Player(sp2, Game.walls, "#aabbcc");
+		Game.player1 = new Player(Game.spawnPoint1, Game.walls);
+		Game.player2 = new Player(Game.spawnPoint2, Game.walls, "#aabbcc");
 		setInterval(Game.loop, 10);
 	},
 	loop: function(){
