@@ -1,3 +1,37 @@
+var GameSession = {
+	url: "http://localhost:8124",
+	session: null,
+	init: function(){
+		this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
+		var sid = this.getSidFromUrl();
+		if(sid){
+			this.session.join(sid);
+		}else{
+			this.session.create();
+		}
+	},
+	initHandler: function(uid, sid){
+		$("#urlBox").attr("value", session.getJoinUrl());
+	},
+	msgHandler: function(msg){
+		alert(msg);
+	},
+	userHandler: function(action, uid){
+		if(action == "join"){
+			this.session.send("spawnPoint:2");
+		}
+	},
+	getSidFromUrl: function(){
+		var params = window.location.search,
+		expr = /sid\=(\d{4})/,
+		sid = 0;
+		if(expr(params)){
+			sid = expr(params)[1];
+		}
+		return sid;
+	}
+}
+
 var Game = {
 	ctx: null,
 	w: 0,
@@ -12,6 +46,7 @@ var Game = {
 		right: false
 	},
 	init: function(){
+		GameSession.init();
 		var canvas = $("#gameCanvas")[0];
 		Game.w = canvas.width;
 		Game.h = canvas.height;
