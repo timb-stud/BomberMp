@@ -77,8 +77,8 @@ var Game = {
 		setInterval(Game.loop, 30);
 	},
 	loop: function(){
-		Game.player1.animate();
-		Game.player2.animate();
+		Game.player1.update();
+		Game.player2.update();
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
 		for(i=0; i< Game.walls.length; i++){
 			Game.walls[i].draw(Game.ctx);

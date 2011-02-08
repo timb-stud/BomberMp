@@ -76,7 +76,7 @@ var Bomb = function(x, y, radius, walls){
 	this.explode = function(){
 		exploded = true;
 	};
-	this.animate = function(){
+	this.update = function(){
 		if(exploded){
 			if(leftRect.w < this.wMax && leftRect.active){
 				for(i=0;i<walls.length;i++){
@@ -159,7 +159,7 @@ var Player = function(spawnPoint, walls, color){
 		bomb.explode();
 		//        bomb = null;
 	};
-	this.animate = function(){
+	this.update = function(){
 		var xTmp = this.x,
 			yTmp = this.y;
 		this.x += this.vx;
@@ -176,7 +176,7 @@ var Player = function(spawnPoint, walls, color){
 			}
 		}
 		if(bomb){
-			bomb.animate();
+			bomb.update();
 		}
 	}
 	this.draw = function(ctx){
