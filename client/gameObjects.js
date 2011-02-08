@@ -133,31 +133,23 @@ var Player = function(spawnPoint, walls, color){
 	this.y = spawnPoint.y;
 	this.w = 20;
 	this.h = 20;
+	this.vx = 0;
+	this.vy = 0;
+	this.acx = 0;
+	this.acy = 0;
 	this.color = color || "#97FFFF";
 	var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
-	this.moveTo = function(x, y){
-		var xTmp = this.x, yTmp = this.y;
-		this.x = x;
-		this.y = y;
-		for (i = 0; i < walls.length; i++) {
-			if (this.touches(walls[i])) {
-				this.x = xTmp;
-				this.y = yTmp;
-				return;
-			}
-		}
-	};
 	this.moveUp = function(){
-		this.moveTo(this.x, this.y - 1);
+		this.vy -= 1;
 	};
 	this.moveDown = function(){
-		this.moveTo(this.x, this.y + 1);
+		this.vy += 1;
 	};
 	this.moveLeft = function(){
-		this.moveTo(this.x - 1, this.y);
+		this.vx -= 1;
 	};
 	this.moveRight = function(){
-		this.moveTo(this.x + 1, this.y);
+		this.vx += 1;
 	};
 	this.dropBomb = function(){
 		bomb = new Bomb(this.x, this.y, bombRadius, walls);
@@ -168,6 +160,21 @@ var Player = function(spawnPoint, walls, color){
 		//        bomb = null;
 	};
 	this.animate = function(){
+		var xTmp = this.x,
+			yTmp = this.y;
+		this.x += this.vx;
+		this.y += this.vy;
+		this.vx *= this.acx;
+		this.vy *= this.acy;
+		for (i = 0; i < walls.length; i++) {
+			if (this.touches(walls[i])) {
+				this.y = yTmp;
+				this.vy = 0;
+				this.x = xTmp;
+				this.vx = 0;
+				break;
+			}
+		}
 		if(bomb){
 			bomb.animate();
 		}
