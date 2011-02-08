@@ -21,7 +21,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		$.post(url, ajaxMsg, pollHandler, "json");
 	};
 	var createHandler = function(data){
-		console.log("createHandler", data);
+		console.log("createHandler:", data);
 		sid = data.sid;
 		uid = data.pid;
 		initHandler(uid, sid);
@@ -32,7 +32,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		$.post(url, ajaxMsg, createHandler, "json");
 	};
 	var joinHandler = function(data){
-		console.log("joinHandler", data);
+		console.log("joinHandler:", data);
 		uid = data.pid;
 		initHandler(uid, sid);
 		poll();
@@ -44,7 +44,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		$.post(url, ajaxMsg, joinHandler, "json");
 	};
 	var sendHandler = function(data){
-		console.log("sendHandler", data);
+		console.log("sendHandler:", data);
 	};
 	this.send = function(msg){
 		var ajaxMsg = JSON.stringify({	"type": "send",

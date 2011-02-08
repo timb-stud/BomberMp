@@ -18,7 +18,7 @@ var GameSession = {
 		}
 	},
 	initHandler: function(uid, sid){
-		$("#urlBox").attr("value", this.session.getJoinUrl());
+		$("#urlBox").attr("value", GameSession.session.getJoinUrl());
 	},
 	msgHandler: function(msg){
 		switch(msg){
@@ -74,7 +74,7 @@ var Game = {
 		Game.walls.push(new Wall(90, 50));
 		Game.player1 = new Player(Game.spawnPoint1, Game.walls);
 		Game.player2 = new Player(Game.spawnPoint2, Game.walls, "#aabbcc");
-		setInterval(Game.loop, 10);
+		setInterval(Game.loop, 30);
 	},
 	loop: function(){
 		Game.player1.animate();
@@ -89,10 +89,10 @@ var Game = {
 			+ "<br> keyPressed.down: " + Game.keyPressed.down
 			+ "<br> keyPressed.left: " + Game.keyPressed.left
 			+ "<br> keyPressed.right: " + Game.keyPressed.right);
-		if(Game.keyPressed.up){ Game.player1.moveUp(); GameSession.send("up");}
-		if(Game.keyPressed.down){ Game.player1.moveDown(); GameSession.send("down");}
-		if(Game.keyPressed.left){ Game.player1.moveLeft(); GameSession.send("left");}
-		if(Game.keyPressed.right){ Game.player1.moveRight(); GameSession.send("right");}
+		if(Game.keyPressed.up){ Game.player1.moveUp(); GameSession.session.send("up");}
+		if(Game.keyPressed.down){ Game.player1.moveDown(); GameSession.session.send("down");}
+		if(Game.keyPressed.left){ Game.player1.moveLeft(); GameSession.session.send("left");}
+		if(Game.keyPressed.right){ Game.player1.moveRight(); GameSession.session.send("right");}
 	}
 };
 
