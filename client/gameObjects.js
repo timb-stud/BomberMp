@@ -135,21 +135,21 @@ var Player = function(spawnPoint, walls, color){
 	this.h = 20;
 	this.vx = 0;
 	this.vy = 0;
-	this.acx = 0;
-	this.acy = 0;
+	this.acx = 0.9;
+	this.acy = 0.9;
 	this.color = color || "#97FFFF";
 	var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
 	this.moveUp = function(){
-		this.vy -= 1;
+		this.vy = -1;
 	};
 	this.moveDown = function(){
-		this.vy += 1;
+		this.vy = 1;
 	};
 	this.moveLeft = function(){
-		this.vx -= 1;
+		this.vx = -1;
 	};
 	this.moveRight = function(){
-		this.vx += 1;
+		this.vx = 1;
 	};
 	this.dropBomb = function(){
 		bomb = new Bomb(this.x, this.y, bombRadius, walls);
@@ -187,3 +187,21 @@ var Player = function(spawnPoint, walls, color){
 	};
 };
 Player.prototype = new GameObject;
+
+var ProtocolDataUnit = function(player){
+	this.x = player.x;
+	this.y = player.y;
+	this.w = 20;
+	this.h = 20;
+	this.vx = player.vx;
+	this.vy = player.vy;
+	this.acx = player.acx;
+	this.acy = player.acy;
+	this.update = function(){
+		this.x += this.vx;
+		this.y += this.vy;
+		this.vx *= this.acx;
+		this.vy *= this.acy;
+	};
+}
+ProtocolDataUnit.prototype = new GameObject;
