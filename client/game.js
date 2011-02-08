@@ -60,7 +60,7 @@ var Game = {
 		right: false
 	},
 	init: function(){
-		//GameSession.init();
+		GameSession.init();
 		var canvas = $("#gameCanvas")[0];
 		Game.w = canvas.width;
 		Game.h = canvas.height;
