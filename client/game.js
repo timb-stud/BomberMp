@@ -18,7 +18,7 @@ var GameSession = {
 		}
 	},
 	initHandler: function(uid, sid){
-		$("#urlBox").attr("value", session.getJoinUrl());
+		$("#urlBox").attr("value", this.session.getJoinUrl());
 	},
 	msgHandler: function(msg){
 		switch(msg){
