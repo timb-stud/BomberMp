@@ -3,10 +3,17 @@ var GameSession = {
 	session: null,
 	init: function(){
 		this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
-		var sid = this.getSidFromUrl();
+		var sid = this.getSidFromUrl(),
+			sp1 = new SpawnPoint(0,0),
+			sp1 = new SpawnPoint(180,180);
+			
 		if(sid){
+			Game.spawnPoint1 = sp2;
+			Game.spawnPoint2 = sp1;
 			this.session.join(sid);
 		}else{
+			Game.spawnPoint1 = sp1;
+			Game.spawnPoint2 = sp2;
 			this.session.create();
 		}
 	},
@@ -14,7 +21,12 @@ var GameSession = {
 		$("#urlBox").attr("value", session.getJoinUrl());
 	},
 	msgHandler: function(msg){
-		alert(msg);
+		switch(msg){
+			case "up": Game.player2.moveUp(); break;
+			case "down": Game.player2.moveDown(); break;
+			case "left": Game.player2.moveLeft(); break;
+			case "right": Game.player2.moveRight(); break;
+		}
 	},
 	userHandler: function(action, uid){
 		if(action == "join"){
@@ -38,6 +50,8 @@ var Game = {
 	h: 0 ,
 	player1: null,
 	player2: null,
+	spawnPoint1: null,
+	spawnPoint2: null,
 	walls: new Array(),
 	keyPressed: {
 		up: false,
@@ -46,7 +60,7 @@ var Game = {
 		right: false
 	},
 	init: function(){
-		GameSession.init();
+		//GameSession.init();
 		var canvas = $("#gameCanvas")[0];
 		Game.w = canvas.width;
 		Game.h = canvas.height;
@@ -58,24 +72,27 @@ var Game = {
 		Game.walls.push(new Wall(90, 90));
 		Game.walls.push(new Wall(90, 70));
 		Game.walls.push(new Wall(90, 50));
-		Game.player1 = new Player(3, 3, Game.walls);
+		Game.player1 = new Player(sp1, Game.walls);
+		Game.player2 = new Player(sp2, Game.walls, "#aabbcc");
 		setInterval(Game.loop, 10);
 	},
 	loop: function(){
 		Game.player1.animate();
+		Game.player2.animate();
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
 		for(i=0; i< Game.walls.length; i++){
 			Game.walls[i].draw(Game.ctx);
 		}
 		Game.player1.draw(Game.ctx);
+		Game.player2.draw(Game.ctx);
 		$("#status").html("keyPressed.up: " + Game.keyPressed.up
 			+ "<br> keyPressed.down: " + Game.keyPressed.down
 			+ "<br> keyPressed.left: " + Game.keyPressed.left
 			+ "<br> keyPressed.right: " + Game.keyPressed.right);
-		if(Game.keyPressed.up){ Game.player1.moveUp();}
-		if(Game.keyPressed.down){ Game.player1.moveDown();}
-		if(Game.keyPressed.left){ Game.player1.moveLeft();}
-		if(Game.keyPressed.right){ Game.player1.moveRight();}
+		if(Game.keyPressed.up){ Game.player1.moveUp(); GameSession.send("up");}
+		if(Game.keyPressed.down){ Game.player1.moveDown(); GameSession.send("down");}
+		if(Game.keyPressed.left){ Game.player1.moveLeft(); GameSession.send("left");}
+		if(Game.keyPressed.right){ Game.player1.moveRight(); GameSession.send("right");}
 	}
 };
 

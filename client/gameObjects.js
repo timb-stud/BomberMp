@@ -128,12 +128,12 @@ var Bomb = function(x, y, radius, walls){
 };
 Bomb.prototype = new GameObject;
 
-var Player = function(x, y, walls){
-	this.x = x;
-	this.y = y;
+var Player = function(spawnPoint, walls, color){
+	this.x = spawnPoint.x;
+	this.y = spawnPoint.y;
 	this.w = 20;
 	this.h = 20;
-	this.color = "#97FFFF";
+	this.color = color || "#97FFFF";
 	var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
 	this.moveTo = function(x, y){
 		var xTmp = this.x, yTmp = this.y;
