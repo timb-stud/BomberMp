@@ -8,7 +8,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 			msgHandler(data.msg);
 		}else{
 			if(data.action){
-				userHandler(data.action, data.pid);
+				userHandler(data.action, data.uid);
 			}
 		}
 		poll();
@@ -16,14 +16,14 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 	var poll = function(){
 		var ajaxMsg = JSON.stringify({	"type": "poll",
 										"sid": sid,
-										"pid": uid});
+										"uid": uid});
 		console.log(sid,uid, ajaxMsg);
 		$.post(url, ajaxMsg, pollHandler, "json");
 	};
 	var createHandler = function(data){
 		console.log("createHandler:", data);
 		sid = data.sid;
-		uid = data.pid;
+		uid = data.uid;
 		initHandler(uid, sid);
 		poll();
 	};
@@ -33,7 +33,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 	};
 	var joinHandler = function(data){
 		console.log("joinHandler:", data);
-		uid = data.pid;
+		uid = data.uid;
 		initHandler(uid, sid);
 		poll();
 	};
@@ -49,7 +49,7 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 	this.send = function(msg){
 		var ajaxMsg = JSON.stringify({	"type": "send",
 										"sid": sid,
-										"pid": uid,
+										"uid": uid,
 										"msg": msg});
 		$.post(url, ajaxMsg, sendHandler, "json");
 	};

@@ -25,24 +25,24 @@ Session = function(sid){
 	this.sid = sid;
 	this.players = [];
 	this.addPlayer= function(){
-		var pid = generatePid();
-		var player = new Player(pid);
+		var uid = generateuid();
+		var player = new Player(uid);
 		this.players.push(player);
 		return player;
 	};
-	this.getPlayer = function(pid){
+	this.getPlayer = function(uid){
 		for(var i=0; i < this.players.length; i++){
-			if(this.players[i].pid == pid){
+			if(this.players[i].uid == uid){
 				return this.players[i];
 			}
 		}
 		return null;
 	};
-	this.alertPlayers = function(msg, pid){
+	this.alertPlayers = function(msg, uid){
 		for(var i=0; i < this.players.length; i++){
-			if(this.players[i].pid != pid){
+			if(this.players[i].uid != uid){
 				var json = JSON.stringify({"msg" : msg});
-				console.log("pid: " + this.players[i].pid +  " res: " + this.players[i].response);
+				console.log("uid: " + this.players[i].uid +  " res: " + this.players[i].response);
 				var res = this.players[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
@@ -51,15 +51,15 @@ Session = function(sid){
 			}
 		}
 	};
-	var generatePid = function(){
+	var generateuid = function(){
 		min = 100;
 		max = 999;
 		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
 };
 
-Player = function(pid){
-	this.pid = pid;
+Player = function(uid){
+	this.uid = uid;
 	this.response = null;
 };
 
@@ -67,24 +67,24 @@ var SessionManager = {
 	newSession: function(){
 		var session = SessionList.addSession();
 		var player = session.addPlayer();
-		return JSON.stringify({"sid": session.sid, "pid": player.pid});
+		return JSON.stringify({"sid": session.sid, "uid": player.uid});
 	},
 	joinSession: function(sid){
 		var session = SessionList.getSession(sid);
 		var player = session.addPlayer();
-		var msg = {action: "join", pid: player.pid};
+		var msg = {action: "join", uid: player.uid};
 		msg = JSON.stringify(msg);
-		SessionManager.send(sid, player.pid, msg);
-		return JSON.stringify({"pid": player.pid});
+		SessionManager.send(sid, player.uid, msg);
+		return JSON.stringify({"uid": player.uid});
 	},
-	poll: function(sid, pid, res){
+	poll: function(sid, uid, res){
 		var session = SessionList.getSession(sid);
-		var player = session.getPlayer(pid);
+		var player = session.getPlayer(uid);
 		player.response = res;
 	},
-	send: function(sid, pid, msg){
+	send: function(sid, uid, msg){
 		var session = SessionList.getSession(sid);
-		session.alertPlayers(msg, pid);
+		session.alertPlayers(msg, uid);
 		return msg;
 	},
 	handle: function(req, res, chunk){
@@ -98,10 +98,10 @@ var SessionManager = {
 					msg = this.joinSession(json.sid);
 					break;
 			case "poll":
-					this.poll(json.sid, json.pid, res);
+					this.poll(json.sid, json.uid, res);
 					break;
 			case "send":
-					msg = this.send(json.sid, json.pid, json.msg);
+					msg = this.send(json.sid, json.uid, json.msg);
 					break;
 			default:
 					console.log("Wrong query Type:" + json.type);
