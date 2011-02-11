@@ -41,13 +41,11 @@ Session = function(sid){
 	this.alertUsers = function(msg, uid){
 		for(var i=0; i < this.users.length; i++){
 			if(this.users[i].uid != uid){
-				var json = JSON.stringify({"msg" : msg});
-				console.log("uid: " + this.users[i].uid +  " res: " + this.users[i].response);
-				var res = this.users[i].response;
-				res.writeHead(200, {'Content-Type': 'text/plain',
-									'Access-Control-Allow-Origin' : '*'});
-				res.end(json);
-				this.users[i].response = null;
+				this.users[i].msgQueue.push(msg);
+				if(this.users[i].response){
+					msg = this.users[i].msgQueue.shift();
+					this.users[i].sendMsg(msg);
+				}
 			}
 		}
 	};
@@ -61,6 +59,16 @@ Session = function(sid){
 User = function(uid){
 	this.uid = uid;
 	this.response = null;
+	this.msgQueue = [];
+	this.sendMsg  = function(msg){
+		if(this.response){
+			var json = JSON.stringify({"msg" : msg});
+			this.response.writeHead(200, {	'Content-Type': 'text/plain',
+											'Access-Control-Allow-Origin' : '*'});
+			this.response.end(json);
+			this.response = null;
+		}
+	}
 };
 
 var SessionManager = {
@@ -81,6 +89,10 @@ var SessionManager = {
 		var session = SessionList.getSession(sid);
 		var user = session.getUser(uid);
 		user.response = res;
+		var msg = user.msgQueue.shift();
+		if(msg){
+			user.sendMsg(msg);
+		}
 	},
 	send: function(sid, uid, msg){
 		var session = SessionList.getSession(sid);
