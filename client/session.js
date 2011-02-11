@@ -3,13 +3,15 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		sid = 0,
 		uid = 0;
 	var pollHandler = function(data){
-		console.log("pollHandler", data);
+		console.log("pollHandler: ", data);
 		if(data.msg){
-			msgHandler(data.msg);
-		}else{
-			if(data.action){
-				userHandler(data.action, data.uid);
-			}
+			
+			var json = JSON.parse(data.msg);
+			if(json.action){
+				userHandler(json.action, json.uid);
+			}else{
+				msgHandler(json);
+			}	
 		}
 		poll();
 	};

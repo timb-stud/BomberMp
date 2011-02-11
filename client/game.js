@@ -3,34 +3,31 @@ var GameSession = {
 	session: null,
 	init: function(){
 		this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
-		var sid = this.getSidFromUrl(),
-			sp1 = new SpawnPoint(0,0),
-			sp2 = new SpawnPoint(180,180);
-			
+		var sid = GameSession.getSidFromUrl();
 		if(sid){
-			Game.spawnPoint1 = sp2;
-			Game.spawnPoint2 = sp1;
-			this.session.join(sid);
+			GameSession.isCreator = false;
+			GameSession.session.join(sid);
 		}else{
-			Game.spawnPoint1 = sp1;
-			Game.spawnPoint2 = sp2;
-			this.session.create();
-		}
+			GameSession.isCreator = true;
+			GameSession.session.create();
+		}	
 	},
 	initHandler: function(uid, sid){
 		$("#urlBox").attr("value", GameSession.session.getJoinUrl());
-	},
-	msgHandler: function(msg){
-		switch(msg){
-			case "up": Game.player2.moveUp(); break;
-			case "down": Game.player2.moveDown(); break;
-			case "left": Game.player2.moveLeft(); break;
-			case "right": Game.player2.moveRight(); break;
+		if(!GameSession.isCreator){
+			var msg = JSON.stringify(Game.player.pdu);
+			GameSession.session.send(msg);
 		}
+	},
+	msgHandler: function(json){
+		console.log("msg handler", json);
+		Game.pdu = new ProtocolDataUnit(json);
+		console.log("PDU: ", Game.pdu);
 	},
 	userHandler: function(action, uid){
 		if(action == "join"){
-			this.session.send("spawnPoint:2");
+			var msg = JSON.stringify(Game.player.pdu);
+			GameSession.session.send(msg);
 		}
 	},
 	getSidFromUrl: function(){
@@ -48,10 +45,10 @@ var Game = {
 	ctx: null,
 	w: 0,
 	h: 0 ,
-	player1: null,
-	player2: null,
-	spawnPoint1: null,
-	spawnPoint2: null,
+	player: null,
+	pdu: null,
+	spawnPoint1: new SpawnPoint(0,0),
+	spawnPoint2: new SpawnPoint(180,180),
 	walls: new Array(),
 	keyPressed: {
 		up: false,
@@ -60,7 +57,6 @@ var Game = {
 		right: false
 	},
 	init: function(){
-		GameSession.init();
 		var canvas = $("#gameCanvas")[0];
 		Game.w = canvas.width;
 		Game.h = canvas.height;
@@ -72,27 +68,40 @@ var Game = {
 		Game.walls.push(new Wall(90, 90));
 		Game.walls.push(new Wall(90, 70));
 		Game.walls.push(new Wall(90, 50));
-		Game.player1 = new Player(Game.spawnPoint1, Game.walls);
-		Game.player2 = new Player(Game.spawnPoint2, Game.walls, "#aabbcc");
+		GameSession.init();
+		if(GameSession.isCreator){
+			Game.player = new Player(Game.spawnPoint1, Game.walls);
+		}else{
+			Game.player = new Player(Game.spawnPoint2, Game.walls);
+		}
 		setInterval(Game.loop, 30);
 	},
 	loop: function(){
-		Game.player1.update();
-		Game.player2.update();
+		Game.player.update();
+		if(Game.pdu){
+			Game.pdu.update();
+		}
+		if(!Game.player.pdu.isInEpsilon()){
+			Game.player.pdu.refresh();
+			var msg = JSON.stringify(Game.player.pdu);
+			GameSession.session.send(msg);
+		}
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
 		for(i=0; i< Game.walls.length; i++){
 			Game.walls[i].draw(Game.ctx);
 		}
-		Game.player1.draw(Game.ctx);
-		Game.player2.draw(Game.ctx);
+		Game.player.draw(Game.ctx);
+		if(Game.pdu){
+			Game.pdu.draw(Game.ctx);
+		}
 		$("#status").html("keyPressed.up: " + Game.keyPressed.up
 			+ "<br> keyPressed.down: " + Game.keyPressed.down
 			+ "<br> keyPressed.left: " + Game.keyPressed.left
 			+ "<br> keyPressed.right: " + Game.keyPressed.right);
-		if(Game.keyPressed.up){ Game.player1.moveUp(); GameSession.session.send("up");}
-		if(Game.keyPressed.down){ Game.player1.moveDown(); GameSession.session.send("down");}
-		if(Game.keyPressed.left){ Game.player1.moveLeft(); GameSession.session.send("left");}
-		if(Game.keyPressed.right){ Game.player1.moveRight(); GameSession.session.send("right");}
+		if(Game.keyPressed.up){ Game.player.moveUp();}
+		if(Game.keyPressed.down){ Game.player.moveDown();}
+		if(Game.keyPressed.left){ Game.player.moveLeft();}
+		if(Game.keyPressed.right){ Game.player.moveRight();}
 	}
 };
 
@@ -108,7 +117,7 @@ function onKeyUp(evt) {
 	if (evt.keyCode == 40){ Game.keyPressed.down = false;}
 	if (evt.keyCode == 37){ Game.keyPressed.left = false;}
 	if (evt.keyCode == 39){ Game.keyPressed.right = false;}
-	if (evt.keyCode == 32){ Game.player1.dropBomb();}
+	if (evt.keyCode == 32){ Game.player.dropBomb();}
 }
 
 $(document).keydown(onKeyDown);

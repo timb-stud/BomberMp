@@ -3,7 +3,7 @@ var GameObject = function(x, y, w, h, color){
 	this.y = y;
 	this.w = w;
 	this.h = h;
-	this.color = color || "#ffffff";
+	this.color = color || "#000000";
 	this.drawRect = function(ctx, fillStyle, x, y, w, h){
 		ctx.fillStyle = fillStyle;
 		ctx.beginPath();
@@ -128,6 +128,46 @@ var Bomb = function(x, y, radius, walls){
 };
 Bomb.prototype = new GameObject;
 
+var ProtocolDataUnit = function(player){
+	this.x = player.x;
+	this.y = player.y;
+	this.color = "#808080";
+	this.w = 20;
+	this.h = 20;
+	this.vMax = 1;
+	this.vx = player.vx;
+	this.vy = player.vy;
+	this.acx = player.acx;
+	this.acy = player.acy;
+	this.update = function(){
+		this.x += this.vx;
+		this.y += this.vy;
+		this.vx *= this.acx;
+		this.vy *= this.acy;
+	};
+	this.isInEpsilon = function(){
+		var x = Math.abs(this.x - player.x),
+			y = Math.abs(this.y - player.y),
+			vx = Math.abs(this.vx - player.vx),
+			vy = Math.abs(this.vy - player.vy),
+			e = x + y + vx + vy;
+		if(e > 3){
+			return false;
+		}else{
+			return true;
+		}
+	};
+	this.refresh = function(){
+		this.x = player.x;
+		this.y = player.y;
+		this.vx = player.vx;
+		this.vy = player.vy;
+		this.acx = player.acx;
+		this.acy = player.acy;
+	}
+}
+ProtocolDataUnit.prototype = new GameObject;
+
 var Player = function(spawnPoint, walls, color){
 	this.x = spawnPoint.x;
 	this.y = spawnPoint.y;
@@ -139,6 +179,7 @@ var Player = function(spawnPoint, walls, color){
 	this.acx = 0.9;
 	this.acy = 0.9;
 	this.color = color || "#97FFFF";
+	this.pdu = new ProtocolDataUnit(this);
 	var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
 	this.moveUp = function(){
 		this.vy = -this.vMax;
@@ -179,7 +220,7 @@ var Player = function(spawnPoint, walls, color){
 		if(bomb){
 			bomb.update();
 		}
-	}
+	};
 	this.draw = function(ctx){
 		this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
 		if (bomb) {
@@ -188,21 +229,3 @@ var Player = function(spawnPoint, walls, color){
 	};
 };
 Player.prototype = new GameObject;
-
-var ProtocolDataUnit = function(player){
-	this.x = player.x;
-	this.y = player.y;
-	this.w = 20;
-	this.h = 20;
-	this.vx = player.vx;
-	this.vy = player.vy;
-	this.acx = player.acx;
-	this.acy = player.acy;
-	this.update = function(){
-		this.x += this.vx;
-		this.y += this.vy;
-		this.vx *= this.acx;
-		this.vy *= this.acy;
-	};
-}
-ProtocolDataUnit.prototype = new GameObject;
