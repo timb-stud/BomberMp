@@ -23,31 +23,31 @@ var SessionList = {
 
 Session = function(sid){
 	this.sid = sid;
-	this.players = [];
-	this.addPlayer= function(){
+	this.users = [];
+	this.addUser= function(){
 		var uid = generateuid();
-		var player = new Player(uid);
-		this.players.push(player);
-		return player;
+		var user = new User(uid);
+		this.users.push(user);
+		return user;
 	};
-	this.getPlayer = function(uid){
-		for(var i=0; i < this.players.length; i++){
-			if(this.players[i].uid == uid){
-				return this.players[i];
+	this.getUser = function(uid){
+		for(var i=0; i < this.users.length; i++){
+			if(this.users[i].uid == uid){
+				return this.users[i];
 			}
 		}
 		return null;
 	};
-	this.alertPlayers = function(msg, uid){
-		for(var i=0; i < this.players.length; i++){
-			if(this.players[i].uid != uid){
+	this.alertUsers = function(msg, uid){
+		for(var i=0; i < this.users.length; i++){
+			if(this.users[i].uid != uid){
 				var json = JSON.stringify({"msg" : msg});
-				console.log("uid: " + this.players[i].uid +  " res: " + this.players[i].response);
-				var res = this.players[i].response;
+				console.log("uid: " + this.users[i].uid +  " res: " + this.users[i].response);
+				var res = this.users[i].response;
 				res.writeHead(200, {'Content-Type': 'text/plain',
 									'Access-Control-Allow-Origin' : '*'});
 				res.end(json);
-				this.players[i].response = null;
+				this.users[i].response = null;
 			}
 		}
 	};
@@ -58,7 +58,7 @@ Session = function(sid){
 	};
 };
 
-Player = function(uid){
+User = function(uid){
 	this.uid = uid;
 	this.response = null;
 };
@@ -66,25 +66,25 @@ Player = function(uid){
 var SessionManager = {
 	newSession: function(){
 		var session = SessionList.addSession();
-		var player = session.addPlayer();
-		return JSON.stringify({"sid": session.sid, "uid": player.uid});
+		var user = session.addUser();
+		return JSON.stringify({"sid": session.sid, "uid": user.uid});
 	},
 	joinSession: function(sid){
 		var session = SessionList.getSession(sid);
-		var player = session.addPlayer();
-		var msg = {action: "join", uid: player.uid};
+		var user = session.addUser();
+		var msg = {action: "join", uid: user.uid};
 		msg = JSON.stringify(msg);
-		SessionManager.send(sid, player.uid, msg);
-		return JSON.stringify({"uid": player.uid});
+		SessionManager.send(sid, user.uid, msg);
+		return JSON.stringify({"uid": user.uid});
 	},
 	poll: function(sid, uid, res){
 		var session = SessionList.getSession(sid);
-		var player = session.getPlayer(uid);
-		player.response = res;
+		var user = session.getUser(uid);
+		user.response = res;
 	},
 	send: function(sid, uid, msg){
 		var session = SessionList.getSession(sid);
-		session.alertPlayers(msg, uid);
+		session.alertUsers(msg, uid);
 		return msg;
 	},
 	handle: function(req, res, chunk){
