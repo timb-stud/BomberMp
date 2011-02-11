@@ -133,6 +133,7 @@ var Player = function(spawnPoint, walls, color){
 	this.y = spawnPoint.y;
 	this.w = 20;
 	this.h = 20;
+	this.vMax = 1;
 	this.vx = 0;
 	this.vy = 0;
 	this.acx = 0.9;
@@ -140,16 +141,16 @@ var Player = function(spawnPoint, walls, color){
 	this.color = color || "#97FFFF";
 	var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
 	this.moveUp = function(){
-		this.vy = -1;
+		this.vy = -this.vMax;
 	};
 	this.moveDown = function(){
-		this.vy = 1;
+		this.vy = this.vMax;
 	};
 	this.moveLeft = function(){
-		this.vx = -1;
+		this.vx = -this.vMax;
 	};
 	this.moveRight = function(){
-		this.vx = 1;
+		this.vx = this.vMax;
 	};
 	this.dropBomb = function(){
 		bomb = new Bomb(this.x, this.y, bombRadius, walls);
