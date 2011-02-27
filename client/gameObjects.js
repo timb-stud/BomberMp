@@ -178,10 +178,6 @@ var Player = function(spawnPoint, walls, color){
     this.color = color || "#97FFFF";
     this.pdu = new ProtocolDataUnit(this);
     var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
-    var xMid = this.x + (Math.floor(this.w / 2));
-    var yMid = this.y + (Math.floor(this.h / 2));
-    console.log(xMid);
-    console.log(yMid);
     this.moveUp = function(){
         this.vy = -this.vMax;
     };
@@ -195,6 +191,10 @@ var Player = function(spawnPoint, walls, color){
         this.vx = this.vMax;
     };
     this.dropBomb = function(){
+        var xMid = this.x;
+        var yMid = this.y;
+        xMid += Math.floor(this.w / 2);
+        yMid += Math.floor(this.h / 2);
         var bombSpawnX = Math.floor(xMid / 20);
         var bombSpawnY = Math.floor(yMid / 20);
         bombSpawnX *= 20;
@@ -213,8 +213,6 @@ var Player = function(spawnPoint, walls, color){
     this.update = function(){
         var xTmp = this.x, yTmp = this.y;
         this.x += this.vx;
-        xMid = this.x;
-        yMid = this.y;
         // console.log("2. ausgabe  " + "xmid=" + xMid + "yMid=" + yMid);
         this.y += this.vy;
         this.vx *= this.acx;

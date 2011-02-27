@@ -61,10 +61,10 @@ var Game = {
 		Game.w = canvas.width;
 		Game.h = canvas.height;
 		Game.ctx = canvas.getContext("2d");
-		Game.walls.push(new Wall(40, 40));
-		Game.walls.push(new Wall(40, 60));
-		Game.walls.push(new Wall(40, 80));
-		Game.walls.push(new Wall(60, 80));
+		Game.walls.push(new Wall(100, 100));
+		Game.walls.push(new Wall(80, 80));
+		Game.walls.push(new Wall(120, 40));
+		Game.walls.push(new Wall(220, 280));
 		Game.walls.push(new Wall(80, 80));
 		Game.walls.push(new Wall(80, 60));
 		Game.walls.push(new Wall(60, 40));
