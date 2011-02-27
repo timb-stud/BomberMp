@@ -61,13 +61,13 @@ var Game = {
 		Game.w = canvas.width;
 		Game.h = canvas.height;
 		Game.ctx = canvas.getContext("2d");
-		Game.walls.push(new Wall(50, 50));
-		Game.walls.push(new Wall(50, 70));
-		Game.walls.push(new Wall(50, 90));
-		Game.walls.push(new Wall(70, 90));
-		Game.walls.push(new Wall(90, 90));
-		Game.walls.push(new Wall(90, 70));
-		Game.walls.push(new Wall(90, 50));
+		Game.walls.push(new Wall(40, 40));
+		Game.walls.push(new Wall(40, 60));
+		Game.walls.push(new Wall(40, 80));
+		Game.walls.push(new Wall(60, 80));
+		Game.walls.push(new Wall(80, 80));
+		Game.walls.push(new Wall(80, 60));
+		Game.walls.push(new Wall(60, 40));
 		GameSession.init();
 		if(GameSession.isCreator){
 			Game.player = new Player(Game.spawnPoint1, Game.walls);
