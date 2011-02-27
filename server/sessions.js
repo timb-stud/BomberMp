@@ -100,24 +100,27 @@ var SessionManager = {
 		return msg;
 	},
 	handle: function(req, res, chunk){
-		var json = JSON.parse(chunk);
 		var msg = null;
-		switch(json.type){
-			case "newSession":
-					msg = this.newSession();
-					break;
-			case "joinSession":
-					msg = this.joinSession(json.sid);
-					break;
-			case "poll":
-					this.poll(json.sid, json.uid, res);
-					break;
-			case "send":
-					msg = this.send(json.sid, json.uid, json.msg);
-					break;
-			default:
-					console.log("Wrong query Type:" + json.type);
-					break;
+		try{
+			var json = JSON.parse(chunk);
+			switch(json.type){
+				case "newSession":
+						msg = this.newSession();
+						break;
+				case "joinSession":
+						msg = this.joinSession(json.sid);
+						break;
+				case "poll":
+						this.poll(json.sid, json.uid, res);
+						break;
+				case "send":
+						msg = this.send(json.sid, json.uid, json.msg);
+						break;
+				default:
+						console.log("Wrong query Type:" + json.type);
+						break;
+			}
+		}catch(e){
 		}
 		return msg;
 	}
