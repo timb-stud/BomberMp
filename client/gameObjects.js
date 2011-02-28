@@ -3,7 +3,7 @@ var GameObject = function(x, y, w, h, color){
     this.y = y;
     this.w = w;
     this.h = h;
-    this.color = color || "#000000";
+    this.color = color || "#ff8040";
     this.drawRect = function(ctx, fillStyle, x, y, w, h){
         ctx.fillStyle = fillStyle;
         ctx.beginPath();
@@ -175,7 +175,7 @@ var Player = function(spawnPoint, walls, color){
     this.vy = 0;
     this.acx = 0.9;
     this.acy = 0.9;
-    this.color = color || "#97FFFF";
+    this.color = color || "#000000";
     this.pdu = new ProtocolDataUnit(this);
     var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
     this.moveUp = function(){
