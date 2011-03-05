@@ -55,11 +55,12 @@ var SpawnPoint = function(x, y){
 };
 SpawnPoint.prototype = new GameObject;
 
-var Bomb = function(x, y, radius, walls){
+var Bomb = function(x, y, timer, radius, walls){
     this.x = x;
     this.y = y;
     this.w = 20;
     this.h = 20;
+    this.timer = timer;
     this.color = "#FF0000";
     this.radius = radius;
     this.wMax = this.w * this.radius;
@@ -72,12 +73,8 @@ var Bomb = function(x, y, radius, walls){
     rightRect.active = true;
     upperRect.active = true;
     lowerRect.active = true;
-    var exploded = false;
-    this.explode = function(){
-        exploded = true;
-    };
     this.update = function(){
-        if (exploded) {
+        if (this.timer < 1) {
             if (leftRect.w < this.wMax && leftRect.active) {
                 for (i = 0; i < walls.length; i++) {
                     if (leftRect.touches(walls[i])) {
@@ -116,6 +113,8 @@ var Bomb = function(x, y, radius, walls){
                 }
                 lowerRect.h++;
             }
+        }else{
+        	this.timer--;
         }
     }
     this.draw = function(ctx){
@@ -177,7 +176,9 @@ var Player = function(spawnPoint, walls, color){
     this.acy = 0.9;
     this.color = color || "#000000";
     this.pdu = new ProtocolDataUnit(this);
-    var bomb = null, bombRadius = 2, bombTimer = 2000, steps = 2;
+    var bomb = null,
+    bombRadius = 2,
+    bombTimer = 50;
     this.moveUp = function(){
         this.vy = -this.vMax;
     };
@@ -203,17 +204,11 @@ var Player = function(spawnPoint, walls, color){
         console.log("bombspawnY=" + bombSpawnY);
         console.log("x=" + this.x);
         console.log("y=" + this.y);
-        bomb = new Bomb(bombSpawnX, bombSpawnY, bombRadius, walls);
-        setTimeout(this.explodeBomb, bombTimer);
-    };
-    this.explodeBomb = function(){
-        bomb.explode();
-        //        bomb = null;
+        bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
     };
     this.update = function(){
         var xTmp = this.x, yTmp = this.y;
         this.x += this.vx;
-        // console.log("2. ausgabe  " + "xmid=" + xMid + "yMid=" + yMid);
         this.y += this.vy;
         this.vx *= this.acx;
         this.vy *= this.acy;
