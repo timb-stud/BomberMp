@@ -100,8 +100,6 @@ var Game = {
             GameSession.session.send(msg);
         }
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
-		Game.ctx.fillstyle = "#ff8040";
-		Game.ctx.fillRect(0, 0, Game.w, Game.h);
         for (i = 0; i < Game.walls.length; i++) {
             Game.walls[i].draw(Game.ctx);
         }
