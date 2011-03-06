@@ -78,9 +78,15 @@ var Bomb = function(x, y, timer, radius, walls){
     rightRect.active = true;
     upperRect.active = true;
     lowerRect.active = true;
+    this.isExploded = function(){
+    	return !(leftRect.active || rightRect.active || upperRect.active || lowerRect.active);
+    };
     this.update = function(){
         if (this.timer < 1) {
-            if (leftRect.w < this.wMax && leftRect.active) {
+            if (leftRect.active) {
+            	if(leftRect.w >= this.wMax){
+        			leftRect.active = false;
+        		}
                 for (i = 0; i < walls.length; i++) {
                     if (leftRect.touches(walls[i])) {
 						if (walls[i].destroyable == true) {
@@ -92,7 +98,10 @@ var Bomb = function(x, y, timer, radius, walls){
                 leftRect.w++;
                 leftRect.x--;
             }
-            if (rightRect.w < this.wMax && rightRect.active) {
+            if (rightRect.active) {
+            	if(rightRect.w >= this.wMax){
+            		rightRect.active = false;
+            	}
                 for (i = 0; i < walls.length; i++) {
                     if (rightRect.touches(walls[i])) {
                         if (walls[i].destroyable == true) {
@@ -103,7 +112,10 @@ var Bomb = function(x, y, timer, radius, walls){
                 }
                 rightRect.w++;
             }
-            if (upperRect.h < this.hMax && upperRect.active) {
+            if (upperRect.active) {
+            	if(upperRect.h >= this.hMax){
+            		upperRect.active = false;
+            	}
                 for (i = 0; i < walls.length; i++) {
                     if (upperRect.touches(walls[i])) {
                         if (walls[i].destroyable == true) {
@@ -115,7 +127,10 @@ var Bomb = function(x, y, timer, radius, walls){
                 upperRect.h++;
                 upperRect.y--;
             }
-            if (lowerRect.h < this.hMax && lowerRect.active) {
+            if (lowerRect.active) {
+            	if(lowerRect.h >= this.hMax){
+            		lowerRect.active = false;
+            	}
                 for (i = 0; i < walls.length; i++) {
                     if (lowerRect.touches(walls[i])) {
                         if (walls[i].destroyable == true) {
@@ -234,10 +249,6 @@ var Player = function(spawnPoint, walls, color){
         var bombSpawnY = Math.floor(yMid / 20);
         bombSpawnX *= 20;
         bombSpawnY *= 20;
-        console.log("bombspawnX=" + bombSpawnX);
-        console.log("bombspawnY=" + bombSpawnY);
-        console.log("x=" + this.x);
-        console.log("y=" + this.y);
         this.bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
     };
     this.update = function(){
@@ -257,6 +268,9 @@ var Player = function(spawnPoint, walls, color){
         }
         if (this.bomb) {
             this.bomb.update();
+            if(this.bomb.isExploded()){
+            	this.bomb = null;
+            }
         }
         if(this.pdu){
         	this.pdu.update();
