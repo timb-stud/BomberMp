@@ -21,9 +21,7 @@ var GameSession = {
         }
     },
     msgHandler: function(json){
-        console.log("msg handler", json);
         Game.pdu = new PlayerPdu(json);
-        console.log("PDU: ", Game.pdu);
     },
     userHandler: function(action, uid){
         if (action == "join") {
@@ -64,7 +62,7 @@ var Game = {
         Game.w = canvas.width;
         Game.h = canvas.height;
         Game.ctx = canvas.getContext("2d");
-        Game.walls.push(new Wall(100, 20, false));
+        Game.walls.push(new Wall(100, 20, true));
         Game.walls.push(new Wall(100, 40, false));
         Game.walls.push(new Wall(100, 60, false));
         Game.walls.push(new Wall(100, 80, false));

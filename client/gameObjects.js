@@ -42,8 +42,8 @@ var Wall = function(x, y, destroyable){
     this.y = y;
     this.w = 20;
     this.h = 20;
-	var destroyable = destroyable;
-	if(destroyable)
+    this.destroyable = destroyable;
+	if(this.destroyable)
     	this.color = "#8B4513";
 	else 
 		this.color = "#c0c0c0";
