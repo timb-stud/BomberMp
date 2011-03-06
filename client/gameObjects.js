@@ -37,13 +37,16 @@ var GameObject = function(x, y, w, h, color){
     };
 }
 
-var Wall = function(x, y){
+var Wall = function(x, y, destroyable){
     this.x = x;
     this.y = y;
     this.w = 20;
     this.h = 20;
-    this.color = "#8B4513";
-	var destroyable = true;
+	var destroyable = destroyable;
+	if(destroyable)
+    	this.color = "#8B4513";
+	else 
+		this.color = "#c0c0c0";
 };
 Wall.prototype = new GameObject;
 
