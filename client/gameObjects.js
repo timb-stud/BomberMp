@@ -43,6 +43,7 @@ var Wall = function(x, y){
     this.w = 20;
     this.h = 20;
     this.color = "#8B4513";
+	var destroyable = true;
 };
 Wall.prototype = new GameObject;
 
@@ -79,7 +80,9 @@ var Bomb = function(x, y, timer, radius, walls){
             if (leftRect.w < this.wMax && leftRect.active) {
                 for (i = 0; i < walls.length; i++) {
                     if (leftRect.touches(walls[i])) {
-                        walls.splice(i, 1);
+						if (walls[i].destroyable == true) {
+							walls.splice(i, 1);
+						}
                         leftRect.active = false;
                     }
                 }
@@ -89,7 +92,9 @@ var Bomb = function(x, y, timer, radius, walls){
             if (rightRect.w < this.wMax && rightRect.active) {
                 for (i = 0; i < walls.length; i++) {
                     if (rightRect.touches(walls[i])) {
-                        walls.splice(i, 1);
+                        if (walls[i].destroyable == true) {
+							walls.splice(i, 1);
+						}
                         rightRect.active = false;
                     }
                 }
@@ -98,7 +103,9 @@ var Bomb = function(x, y, timer, radius, walls){
             if (upperRect.h < this.hMax && upperRect.active) {
                 for (i = 0; i < walls.length; i++) {
                     if (upperRect.touches(walls[i])) {
-                        walls.splice(i, 1);
+                        if (walls[i].destroyable == true) {
+							walls.splice(i, 1);
+						}
                         upperRect.active = false;
                     }
                 }
@@ -108,7 +115,9 @@ var Bomb = function(x, y, timer, radius, walls){
             if (lowerRect.h < this.hMax && lowerRect.active) {
                 for (i = 0; i < walls.length; i++) {
                     if (lowerRect.touches(walls[i])) {
-                        walls.splice(i, 1);
+                        if (walls[i].destroyable == true) {
+							walls.splice(i, 1);
+						}
                         lowerRect.active = false;
                     }
                 }
