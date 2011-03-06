@@ -37,6 +37,10 @@ var GameSession = {
             sid = expr(params)[1];
         }
         return sid;
+    },
+    sendPdu: function(pdu){
+    	var msg = JSON.stringify(pdu);
+		GameSession.session.send(msg);
     }
 }
 
@@ -96,8 +100,7 @@ var Game = {
         }
         if (!Game.player.pdu.isInEpsilon()) {
             Game.player.pdu.refresh();
-            var msg = JSON.stringify(Game.player.pdu);
-            GameSession.session.send(msg);
+            GameSession.sendPdu(Game.player.pdu);
         }
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
         for (i = 0; i < Game.walls.length; i++) {

@@ -145,7 +145,11 @@ var ProtocolDataUnit = function(player){
         this.vy *= this.acy;
     };
     this.isInEpsilon = function(){
-        var x = Math.abs(this.x - player.x), y = Math.abs(this.y - player.y), vx = Math.abs(this.vx - player.vx), vy = Math.abs(this.vy - player.vy), e = x + y + vx + vy;
+        var x = Math.abs(this.x - player.x),
+        y = Math.abs(this.y - player.y),
+        vx = Math.abs(this.vx - player.vx),
+        vy = Math.abs(this.vy - player.vy),
+        e = x + y + vx + vy;
         if (e > 3) {
             return false;
         }
