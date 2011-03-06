@@ -127,7 +127,7 @@ var Bomb = function(x, y, timer, radius, walls){
 };
 Bomb.prototype = new GameObject;
 
-var ProtocolDataUnit = function(player){
+var PlayerPdu = function(player){
     this.x = player.x;
     this.y = player.y;
     this.color = "#808080";
@@ -166,7 +166,7 @@ var ProtocolDataUnit = function(player){
         this.acy = player.acy;
     }
 }
-ProtocolDataUnit.prototype = new GameObject;
+PlayerPdu.prototype = new GameObject;
 
 var Player = function(spawnPoint, walls, color){
     this.x = spawnPoint.x;
@@ -179,7 +179,7 @@ var Player = function(spawnPoint, walls, color){
     this.acx = 0.9;
     this.acy = 0.9;
     this.color = color || "#000000";
-    this.pdu = new ProtocolDataUnit(this);
+    this.pdu = new PlayerPdu(this);
     var bomb = null,
     bombRadius = 2,
     bombTimer = 50;

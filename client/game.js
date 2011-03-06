@@ -22,7 +22,7 @@ var GameSession = {
     },
     msgHandler: function(json){
         console.log("msg handler", json);
-        Game.pdu = new ProtocolDataUnit(json);
+        Game.pdu = new PlayerPdu(json);
         console.log("PDU: ", Game.pdu);
     },
     userHandler: function(action, uid){
