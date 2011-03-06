@@ -260,9 +260,24 @@ var Player = function(spawnPoint, walls, color){
         for (i = 0; i < walls.length; i++) {
             if (this.touches(walls[i])) {
                 this.y = yTmp;
-                this.vy = 0;
                 this.x = xTmp;
                 this.vx = 0;
+                this.vy = 0;
+                if(this.isLeftOf(walls[i])){
+                	console.log("JO");
+                	this.x = walls[i].x - this.w;
+                }else{
+                	if(walls[i].isLeftOf(this)){
+                		console.log("JO");
+                		this.x = walls[i].x + this.w;
+                	}
+                }
+                if(this.isAbove(walls[i])){
+                	this.y = walls[i].y - this.h;
+                }
+                if(walls[i].isAbove(this)){
+                	this.y = walls[i].y + this.h;
+                }
                 break;
             }
         }
