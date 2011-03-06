@@ -65,6 +65,7 @@ var Bomb = function(x, y, timer, radius, walls){
     this.radius = radius;
     this.wMax = this.w * this.radius;
     this.hMax = this.h * this.radius;
+    this.pdu = new BombPdu(this);
     var leftRect = new GameObject(this.x, this.y, 0, this.h, this.color);
     var rightRect = new GameObject(this.x + this.w, this.y, 0, this.h, this.color);
     var upperRect = new GameObject(this.x, this.y, this.w, 0, this.color);
@@ -116,6 +117,7 @@ var Bomb = function(x, y, timer, radius, walls){
         }else{
         	this.timer--;
         }
+        this.pdu.update();
     }
     this.draw = function(ctx){
         this.drawRect(ctx, "#FFF000", this.x, this.y, this.w, this.h);
@@ -126,6 +128,23 @@ var Bomb = function(x, y, timer, radius, walls){
     };
 };
 Bomb.prototype = new GameObject;
+
+var BombPdu = function(bomb){
+	this.x = bomb.x;
+    this.y = bomb.y;
+    this.timer = bomb.timer;
+    this.radius = bomb.radius;
+    this.refresh = function(){
+    	this.x = bomb.x;
+    	this.y = bomb.y;
+    	this.timer = bomb.timer;
+    	this.radius = bomb.raduis;
+    };
+    this.isInEpsilon = function(){
+    	return this.timer == bomb.timer;
+    };
+}
+BombPdu.prototype = new Bomb;
 
 var PlayerPdu = function(player){
     this.x = player.x;
@@ -146,10 +165,10 @@ var PlayerPdu = function(player){
     };
     this.isInEpsilon = function(){
         var x = Math.abs(this.x - player.x),
-        y = Math.abs(this.y - player.y),
-        vx = Math.abs(this.vx - player.vx),
-        vy = Math.abs(this.vy - player.vy),
-        e = x + y + vx + vy;
+        	y = Math.abs(this.y - player.y),
+        	vx = Math.abs(this.vx - player.vx),
+        	vy = Math.abs(this.vy - player.vy),
+        	e = x + y + vx + vy;
         if (e > 3) {
             return false;
         }
@@ -164,7 +183,7 @@ var PlayerPdu = function(player){
         this.vy = player.vy;
         this.acx = player.acx;
         this.acy = player.acy;
-    }
+    };
 }
 PlayerPdu.prototype = new GameObject;
 
@@ -180,9 +199,9 @@ var Player = function(spawnPoint, walls, color){
     this.acy = 0.9;
     this.color = color || "#000000";
     this.pdu = new PlayerPdu(this);
-    var bomb = null,
-    bombRadius = 2,
-    bombTimer = 50;
+    this.bomb = null;
+    var bombRadius = 2,
+   		bombTimer = 50;
     this.moveUp = function(){
         this.vy = -this.vMax;
     };
@@ -208,7 +227,7 @@ var Player = function(spawnPoint, walls, color){
         console.log("bombspawnY=" + bombSpawnY);
         console.log("x=" + this.x);
         console.log("y=" + this.y);
-        bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
+        this.bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
     };
     this.update = function(){
         var xTmp = this.x, yTmp = this.y;
@@ -225,14 +244,17 @@ var Player = function(spawnPoint, walls, color){
                 break;
             }
         }
-        if (bomb) {
-            bomb.update();
+        if (this.bomb) {
+            this.bomb.update();
+        }
+        if(this.pdu){
+        	this.pdu.update();
         }
     };
     this.draw = function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
-        if (bomb) {
-            bomb.draw(ctx);
+        if (this.bomb) {
+            this.bomb.draw(ctx);
         }
     };
 };
