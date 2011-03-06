@@ -117,7 +117,6 @@ var Bomb = function(x, y, timer, radius, walls){
         }else{
         	this.timer--;
         }
-        this.pdu.update();
     }
     this.draw = function(ctx){
         this.drawRect(ctx, "#FFF000", this.x, this.y, this.w, this.h);
