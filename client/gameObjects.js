@@ -252,30 +252,31 @@ var Player = function(spawnPoint, walls, color){
         this.bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
     };
     this.update = function(){
-        var xTmp = this.x, yTmp = this.y;
+        var xTmp = this.x, 
+        	yTmp = this.y;
         this.x += this.vx;
-        this.y += this.vy;
         this.vx *= this.acx;
+        for (i = 0; i < walls.length; i++) {
+            if (this.touches(walls[i])) {
+                this.x = xTmp;
+                this.vx = 0;
+                if(this.isLeftOf(walls[i])){
+                	this.x = walls[i].x - this.w;
+                }else{
+                	this.x = walls[i].x + this.w;
+                }
+                break;
+            }
+        }
+        this.y += this.vy;
         this.vy *= this.acy;
         for (i = 0; i < walls.length; i++) {
             if (this.touches(walls[i])) {
-                this.y = yTmp;
-                this.x = xTmp;
-                this.vx = 0;
+            	this.y = yTmp;
                 this.vy = 0;
-                if(this.isLeftOf(walls[i])){
-                	console.log("JO");
-                	this.x = walls[i].x - this.w;
-                }else{
-                	if(walls[i].isLeftOf(this)){
-                		console.log("JO");
-                		this.x = walls[i].x + this.w;
-                	}
-                }
                 if(this.isAbove(walls[i])){
                 	this.y = walls[i].y - this.h;
-                }
-                if(walls[i].isAbove(this)){
+                }else{
                 	this.y = walls[i].y + this.h;
                 }
                 break;
