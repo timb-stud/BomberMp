@@ -62,26 +62,20 @@ var Game = {
         Game.w = canvas.width;
         Game.h = canvas.height;
         Game.ctx = canvas.getContext("2d");
-        Game.walls.push(new Wall(100, 20, true));
-        Game.walls.push(new Wall(100, 40, false));
+        Game.walls.push(new Wall(40, 20, true));
+        
+        Game.walls.push(new Wall(20, 20, false));
+        Game.walls.push(new Wall(60, 20, false));
+        Game.walls.push(new Wall(100, 20, false));
+        
+        Game.walls.push(new Wall(20, 60, false));
+        Game.walls.push(new Wall(60, 60, false));
         Game.walls.push(new Wall(100, 60, false));
-        Game.walls.push(new Wall(100, 80, false));
+        
+        Game.walls.push(new Wall(20, 100, false));
+        Game.walls.push(new Wall(60, 100, false));
         Game.walls.push(new Wall(100, 100, false));
-        Game.walls.push(new Wall(100, 120, false));
-        Game.walls.push(new Wall(20, 120, false));
-        Game.walls.push(new Wall(40, 120, false));
-        Game.walls.push(new Wall(60, 120, false));
-        Game.walls.push(new Wall(80, 120, false));
-        Game.walls.push(new Wall(20, 180, false));
-        Game.walls.push(new Wall(40, 180, false));
-        Game.walls.push(new Wall(60, 180, false));
-        Game.walls.push(new Wall(80, 180, false));
-        Game.walls.push(new Wall(100, 180, false));
-        Game.walls.push(new Wall(100, 200, false));
-        Game.walls.push(new Wall(100, 220, false));
-        Game.walls.push(new Wall(100, 240, false));
-        Game.walls.push(new Wall(100, 260, false));
-        Game.walls.push(new Wall(100, 280, false));
+
         GameSession.init();
         if (GameSession.isCreator) {
             Game.player = new Player(Game.spawnPoint1, Game.walls);
