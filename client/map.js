@@ -6,6 +6,8 @@ function Map(dimX, dimY){
 	}
 }
 Map.prototype ={
+	boxH: 20,
+	boxW: 20,
 	add: function(obj, x, y){
 		this.array[x][y] = obj;
 	},
@@ -22,11 +24,11 @@ Map.prototype ={
         ctx.fill();
     },
 	draw: function(ctx){
-		for(var i = 0; i < this.array.length; i++){
-			for(var j=0; j< this.array[0].length; j++){
-			var go = this.array[i][j];
+		for(var x = 0; x < this.array.length; x++){
+			for(var y = 0; y < this.array[0].length; y++){
+			var go = this.array[x][y];
 				if(go){
-					go.draw(ctx);
+					drawRect(ctx, go.color, x * this.boxW, y * this.boxH, this.boxW, this.boxH);
 				}
 			}
 		}

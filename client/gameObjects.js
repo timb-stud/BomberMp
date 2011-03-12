@@ -37,18 +37,16 @@ var GameObject = function(x, y, w, h, color){
     };
 }
 
-var Wall = function(x, y, destroyable){
-    this.x = x;
-    this.y = y;
-    this.w = 20;
-    this.h = 20;
-    this.destroyable = destroyable;
-	if(this.destroyable)
-    	this.color = "#8B4513";
-	else 
-		this.color = "#c0c0c0";
+var Wall = function(){
 };
-Wall.prototype = new GameObject;
+Wall.prototype = {
+	color: "#8B4513";
+};
+function SolidWall(){
+};
+SolidWall.prototype = {
+	color: "#c0c0c0";
+}
 
 var SpawnPoint = function(x, y){
     this.x = x;

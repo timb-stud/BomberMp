@@ -65,22 +65,10 @@ var Game = {
         Game.ctx = canvas.getContext("2d");
         Game.map = new Map(Game.w / 20, Game.h / 20);
         
-        Game.map.add(new Wall(40, 20, false), 1, 1 );
-        
-        Game.walls.push(new Wall(40, 20, true));
-        
-        Game.walls.push(new Wall(20, 20, false));
-        Game.walls.push(new Wall(60, 20, false));
-        Game.walls.push(new Wall(100, 20, false));
-        
-        Game.walls.push(new Wall(20, 60, false));
-        Game.walls.push(new Wall(60, 60, false));
-        Game.walls.push(new Wall(100, 60, false));
-        
-        Game.walls.push(new Wall(20, 100, false));
-        Game.walls.push(new Wall(60, 100, false));
-        Game.walls.push(new Wall(100, 100, false));
-
+        Game.map.add(new Wall(), 1, 1 );
+        Game.map.add(new Wall(), 1, 2 );
+        Game.map.add(new Wall(), 1, 3 );
+     
         GameSession.init();
         if (GameSession.isCreator) {
             Game.player = new Player(Game.spawnPoint1, Game.walls);
@@ -100,9 +88,6 @@ var Game = {
             GameSession.sendPdu(Game.player.pdu);
         }
 		Game.ctx.clearRect(0, 0, Game.w, Game.h);
-        //for (i = 0; i < Game.walls.length; i++) {
-          //  Game.walls[i].draw(Game.ctx);
-        //}
       	Game.map.draw(Game.ctx);
         Game.player.draw(Game.ctx);
         if (Game.pdu) {
