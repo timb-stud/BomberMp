@@ -40,12 +40,12 @@ var GameObject = function(x, y, w, h, color){
 var Wall = function(){
 };
 Wall.prototype = {
-	color: "#8B4513";
+	color: "#8B4513"
 };
 function SolidWall(){
 };
 SolidWall.prototype = {
-	color: "#c0c0c0";
+	color: "#c0c0c0"
 }
 
 var SpawnPoint = function(x, y){
@@ -211,7 +211,7 @@ var PlayerPdu = function(player){
 }
 PlayerPdu.prototype = new GameObject;
 
-var Player = function(spawnPoint, walls, color){
+var Player = function(spawnPoint, map, color){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
     this.w = 20;
@@ -250,36 +250,17 @@ var Player = function(spawnPoint, walls, color){
         this.bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
     };
     this.update = function(){
-        var xTmp = this.x, 
-        	yTmp = this.y;
-        this.x += this.vx;
-        this.vx *= this.acx;
-        for (i = 0; i < walls.length; i++) {
-            if (this.touches(walls[i])) {
-                this.x = xTmp;
-                this.vx = 0;
-                if(this.isLeftOf(walls[i])){
-                	this.x = walls[i].x - this.w;
-                }else{
-                	this.x = walls[i].x + this.w;
-                }
-                break;
-            }
-        }
-        this.y += this.vy;
-        this.vy *= this.acy;
-        for (i = 0; i < walls.length; i++) {
-            if (this.touches(walls[i])) {
-            	this.y = yTmp;
-                this.vy = 0;
-                if(this.isAbove(walls[i])){
-                	this.y = walls[i].y - this.h;
-                }else{
-                	this.y = walls[i].y + this.h;
-                }
-                break;
-            }
-        }
+    	var newX = this.x + this.vx,
+    		newY = this.y + this.vy,
+    		boxX = map.toBoxX(newX),
+    		boxY = map.toBoxY(newY);
+    	if(map.isFree(boxX, boxY)){
+    		this.x = newX;
+    		this.y = newY;
+    	}
+    	this.vx *= this.acx;
+    	this.vy *= this.acy;
+
         if (this.bomb) {
             this.bomb.update();
             if(this.bomb.isExploded()){

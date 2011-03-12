@@ -1,8 +1,10 @@
 function Map(dimX, dimY){
-	console.log("Map init", dimX, dimY);
 	this.array = new Array(dimX);
 	for(var i = 0; i < dimX; i++){
 		this.array[i] = new Array(dimY);
+		for(var j = 0; j < dimY; j++){
+			this.array[i][j] = null;
+		}
 	}
 }
 Map.prototype ={
@@ -28,9 +30,21 @@ Map.prototype ={
 			for(var y = 0; y < this.array[0].length; y++){
 			var go = this.array[x][y];
 				if(go){
-					drawRect(ctx, go.color, x * this.boxW, y * this.boxH, this.boxW, this.boxH);
+					this.drawRect(ctx, go.color, x * this.boxW, y * this.boxH, this.boxW, this.boxH);
 				}
 			}
 		}
+	},
+	toBoxX: function(posX){
+		return Math.floor(posX / this.boxW);
+	},
+	toBoxY: function(posY){
+		return Math.floor(posY / this.boxH);
+	},
+	isFree: function(boxX, boxY){
+		if(boxX < 0 || boxY < 0){
+			return false;
+		}
+		return this.array[boxX][boxY] == null;
 	}
 }

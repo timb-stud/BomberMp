@@ -51,7 +51,6 @@ var Game = {
     pdu: null,
     spawnPoint1: new SpawnPoint(0, 0),
     spawnPoint2: new SpawnPoint(180, 180),
-    walls: new Array(),
     keyPressed: {
         up: false,
         down: false,
@@ -65,16 +64,17 @@ var Game = {
         Game.ctx = canvas.getContext("2d");
         Game.map = new Map(Game.w / 20, Game.h / 20);
         
-        Game.map.add(new Wall(), 1, 1 );
-        Game.map.add(new Wall(), 1, 2 );
-        Game.map.add(new Wall(), 1, 3 );
+        Game.map.add(new SolidWall(), 1, 1 );
+        Game.map.add(new SolidWall(), 3, 1 );
+        Game.map.add(new SolidWall(), 1, 3 );
+        Game.map.add(new SolidWall(), 3, 3 );
      
         GameSession.init();
         if (GameSession.isCreator) {
-            Game.player = new Player(Game.spawnPoint1, Game.walls);
+            Game.player = new Player(Game.spawnPoint1, Game.map);
         }
         else {
-            Game.player = new Player(Game.spawnPoint2, Game.walls);
+            Game.player = new Player(Game.spawnPoint2, Game.map);
         }
         setInterval(Game.loop, 30);
     },
