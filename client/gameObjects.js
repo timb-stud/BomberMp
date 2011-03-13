@@ -1,26 +1,28 @@
-var GameObject = function(x, y, w, h, color){
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.color = color || "#ff8040";
-    this.drawRect = function(ctx, fillStyle, x, y, w, h){
+function GameObject(){
+};
+GameObject.prototype = {
+	x: 0,
+	y: 0,
+	w: 20,
+	h: 20,
+	color: "#123456",
+	drawRect: function(ctx, fillStyle, x, y, w, h){
         ctx.fillStyle = fillStyle;
         ctx.beginPath();
         ctx.rect(x, y, w, h);
         ctx.closePath();
         ctx.fill();
-    };
-    this.draw = function(ctx){
+    },
+    draw: function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
-    };
-    this.isLeftOf = function(go){
+    },
+    isLeftOf: function(go){
         return this.x + this.w <= go.x;
-    };
-    this.isAbove = function(go){
+    },
+    isAbove: function(go){
         return this.y + this.h <= go.y;
-    };
-    this.touches = function(go){
+    },
+    touches: function(go){
         if (this.isLeftOf(go)) {
             return false;
         }
@@ -34,8 +36,8 @@ var GameObject = function(x, y, w, h, color){
             return false;
         }
         return true;
-    };
-}
+    }
+};
 
 var Wall = function(){
 };
@@ -51,107 +53,42 @@ SolidWall.prototype = {
 var SpawnPoint = function(x, y){
     this.x = x;
     this.y = y;
-    this.w = 20;
-    this.h = 20;
-    this.color = "#FF7F50";
 };
-SpawnPoint.prototype = new GameObject;
+SpawnPoint.prototype = {
+	color: "#FF7F50"
+};
+SpawnPoint.prototype.__proto__ = GameObject.prototype;
 
-var Bomb = function(x, y, timer, radius, walls){
+function Bomb(x, y, timer, radius, map){
     this.x = x;
     this.y = y;
-    this.w = 20;
-    this.h = 20;
     this.timer = timer;
-    this.color = "#FF0000";
     this.radius = radius;
-    this.wMax = this.w * this.radius;
-    this.hMax = this.h * this.radius;
+    this.map = map;
     this.pdu = new BombPdu(this);
-    var leftRect = new GameObject(this.x, this.y, 0, this.h, this.color);
-    var rightRect = new GameObject(this.x + this.w, this.y, 0, this.h, this.color);
-    var upperRect = new GameObject(this.x, this.y, this.w, 0, this.color);
-    var lowerRect = new GameObject(this.x, this.y + this.h, this.w, 0, this.color);
-    leftRect.active = true;
-    rightRect.active = true;
-    upperRect.active = true;
-    lowerRect.active = true;
-    this.isExploded = function(){
-    	return !(leftRect.active || rightRect.active || upperRect.active || lowerRect.active);
-    };
-    this.update = function(){
+};
+Bomb.prototype = {
+	color: "#FF0000",
+    isExploded: function(){
+    	return ;
+    },
+    update: function(){
         if (this.timer < 1) {
-            if (leftRect.active) {
-            	if(leftRect.w >= this.wMax){
-        			leftRect.active = false;
-        		}
-                for (i = 0; i < walls.length; i++) {
-                    if (leftRect.touches(walls[i])) {
-						if (walls[i].destroyable == true) {
-							walls.splice(i, 1);
-						}
-                        leftRect.active = false;
-                    }
-                }
-                leftRect.w++;
-                leftRect.x--;
-            }
-            if (rightRect.active) {
-            	if(rightRect.w >= this.wMax){
-            		rightRect.active = false;
-            	}
-                for (i = 0; i < walls.length; i++) {
-                    if (rightRect.touches(walls[i])) {
-                        if (walls[i].destroyable == true) {
-							walls.splice(i, 1);
-						}
-                        rightRect.active = false;
-                    }
-                }
-                rightRect.w++;
-            }
-            if (upperRect.active) {
-            	if(upperRect.h >= this.hMax){
-            		upperRect.active = false;
-            	}
-                for (i = 0; i < walls.length; i++) {
-                    if (upperRect.touches(walls[i])) {
-                        if (walls[i].destroyable == true) {
-							walls.splice(i, 1);
-						}
-                        upperRect.active = false;
-                    }
-                }
-                upperRect.h++;
-                upperRect.y--;
-            }
-            if (lowerRect.active) {
-            	if(lowerRect.h >= this.hMax){
-            		lowerRect.active = false;
-            	}
-                for (i = 0; i < walls.length; i++) {
-                    if (lowerRect.touches(walls[i])) {
-                        if (walls[i].destroyable == true) {
-							walls.splice(i, 1);
-						}
-                        lowerRect.active = false;
-                    }
-                }
-                lowerRect.h++;
-            }
+			var boxX = this.map.toBoxX(this.x),
+				boxY = this.map.toBoxY(this.y);
+			this.map.blow(boxX - 1, boxY);
+			this.map.blow(boxX + 1, boxY);
+			this.map.blow(boxX, boxY - 1);
+			this.map.blow(boxX, boxY + 1);
         }else{
         	this.timer--;
         }
+    },
+    draw: function(ctx){
+        this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
     }
-    this.draw = function(ctx){
-        this.drawRect(ctx, "#FFF000", this.x, this.y, this.w, this.h);
-        leftRect.draw(ctx);
-        rightRect.draw(ctx);
-        upperRect.draw(ctx);
-        lowerRect.draw(ctx);
-    };
 };
-Bomb.prototype = new GameObject;
+Bomb.prototype.__proto__ = GameObject.prototype;
 
 var BombPdu = function(bomb){
 	this.x = bomb.x;
@@ -170,28 +107,28 @@ var BombPdu = function(bomb){
 }
 BombPdu.prototype = new Bomb;
 
-var PlayerPdu = function(player){
+function PlayerPdu(player){
+	this.player = player;
     this.x = player.x;
     this.y = player.y;
-    this.color = "#808080";
-    this.w = 20;
-    this.h = 20;
-    this.vMax = 1;
     this.vx = player.vx;
     this.vy = player.vy;
     this.acx = player.acx;
     this.acy = player.acy;
-    this.update = function(){
+}
+PlayerPdu.prototype = {
+	color: "#808080",
+	update: function(){
         this.x += this.vx;
         this.y += this.vy;
         this.vx *= this.acx;
         this.vy *= this.acy;
-    };
-    this.isInEpsilon = function(){
-        var x = Math.abs(this.x - player.x),
-        	y = Math.abs(this.y - player.y),
-        	vx = Math.abs(this.vx - player.vx),
-        	vy = Math.abs(this.vy - player.vy),
+    },
+    isInEpsilon: function(){
+        var x = Math.abs(this.x - this.player.x),
+        	y = Math.abs(this.y - this.player.y),
+        	vx = Math.abs(this.vx - this.player.vx),
+        	vy = Math.abs(this.vy - this.player.vy),
         	e = x + y + vx + vy;
         if (e > 3) {
             return false;
@@ -199,46 +136,49 @@ var PlayerPdu = function(player){
         else {
             return true;
         }
-    };
-    this.refresh = function(){
-        this.x = player.x;
-        this.y = player.y;
-        this.vx = player.vx;
-        this.vy = player.vy;
-        this.acx = player.acx;
-        this.acy = player.acy;
-    };
-}
-PlayerPdu.prototype = new GameObject;
+    },
+    refresh: function(){
+        this.x = this.player.x;
+        this.y = this.player.y;
+        this.vx = this.player.vx;
+        this.vy = this.player.vy;
+        this.acx = this.player.acx;
+        this.acy = this.player.acy;
+    }
+};
+PlayerPdu.prototype.__proto__ = GameObject.prototype;
 
-var Player = function(spawnPoint, map, color){
+function Player(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
-    this.w = 20;
-    this.h = 20;
-    this.vMax = 2;
-    this.vx = 0;
-    this.vy = 0;
-    this.acx = 0.9;
-    this.acy = 0.9;
-    this.color = color || "#000000";
+    this.map = map;
     this.pdu = new PlayerPdu(this);
-    this.bomb = null;
-    var bombRadius = 2,
-   		bombTimer = 50;
-    this.moveUp = function(){
+};
+Player.prototype = {
+	w: 20,
+	h: 20,
+	vMax: 2,
+	vx: 0,
+	vy: 0,
+	acx: 0.9,
+	acy: 0.9,
+	color: "#000000",
+	bomb: null,
+	bombRadius: 2,
+	bombTimer: 50,
+	moveUp: function(){
         this.vy = -this.vMax;
-    };
-    this.moveDown = function(){
+    },
+    moveDown: function(){
         this.vy = this.vMax;
-    };
-    this.moveLeft = function(){
+    },
+    moveLeft: function(){
         this.vx = -this.vMax;
-    };
-    this.moveRight = function(){
+    },
+    moveRight: function(){
         this.vx = this.vMax;
-    };
-    this.dropBomb = function(){
+    },
+    dropBomb: function(){
         var xMid = this.x;
         var yMid = this.y;
         xMid += Math.floor(this.w / 2);
@@ -247,16 +187,22 @@ var Player = function(spawnPoint, map, color){
         var bombSpawnY = Math.floor(yMid / 20);
         bombSpawnX *= 20;
         bombSpawnY *= 20;
-        this.bomb = new Bomb(bombSpawnX, bombSpawnY, bombTimer,  bombRadius, walls);
-    };
-    this.update = function(){
+        this.bomb = new Bomb(bombSpawnX, bombSpawnY, this.bombTimer,  this.bombRadius, this.map);
+    },
+    update: function(){
     	var newX = this.x + this.vx,
     		newY = this.y + this.vy,
-    		boxX = map.toBoxX(newX),
-    		boxY = map.toBoxY(newY);
-    	if(map.isFree(boxX, boxY)){
+    		boxX = this.map.toBoxX(this.x + 10),
+    		boxY = this.map.toBoxY(this.y + 10);
+    	if(this.map.isFree(boxX + 1, boxY) && newX > this.x || (this.map.isFree(boxX - 1, boxY) && newX < this.x)){
     		this.x = newX;
+    	}else{
+    		this.x = boxX * 20;
+    	}
+    	if(this.map.isFree(boxX, boxY + 1) && newY > this.y || this.map.isFree(boxX, boxY - 1) && newY < this.y){
     		this.y = newY;
+    	}else{
+    		this.y = boxY * 20;
     	}
     	this.vx *= this.acx;
     	this.vy *= this.acy;
@@ -270,12 +216,12 @@ var Player = function(spawnPoint, map, color){
         if(this.pdu){
         	this.pdu.update();
         }
-    };
-    this.draw = function(ctx){
+    },
+    draw: function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
         if (this.bomb) {
             this.bomb.draw(ctx);
         }
-    };
+    }
 };
-Player.prototype = new GameObject;
+Player.prototype.__proto__ = GameObject.prototype;

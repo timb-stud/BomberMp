@@ -16,8 +16,7 @@ var GameSession = {
     initHandler: function(uid, sid){
         $("#urlBox").attr("value", GameSession.session.getJoinUrl());
         if (!GameSession.isCreator) {
-            var msg = JSON.stringify(Game.player.pdu);
-            GameSession.session.send(msg);
+            GameSession.sendPdu(Game.player.pdu);
         }
     },
     msgHandler: function(json){
@@ -25,8 +24,7 @@ var GameSession = {
     },
     userHandler: function(action, uid){
         if (action == "join") {
-            var msg = JSON.stringify(Game.player.pdu);
-            GameSession.session.send(msg);
+            GameSession.sendPdu(Game.player.pdu);
         }
     },
     getSidFromUrl: function(){
@@ -37,7 +35,15 @@ var GameSession = {
         return sid;
     },
     sendPdu: function(pdu){
-    	var msg = JSON.stringify(pdu);
+    	var json = {
+    		x: pdu.x,
+    		y: pdu.y,
+    		vx: pdu.vx,
+    		vy: pdu.vy,
+    		acx: pdu.acx,
+    		acy: pdu.acy
+    	};
+    	var msg = JSON.stringify(json);
 		GameSession.session.send(msg);
     }
 }
@@ -50,7 +56,7 @@ var Game = {
     player: null,
     pdu: null,
     spawnPoint1: new SpawnPoint(0, 0),
-    spawnPoint2: new SpawnPoint(180, 180),
+    spawnPoint2: new SpawnPoint(240, 120),
     keyPressed: {
         up: false,
         down: false,
@@ -65,9 +71,30 @@ var Game = {
         Game.map = new Map(Game.w / 20, Game.h / 20);
         
         Game.map.add(new SolidWall(), 1, 1 );
-        Game.map.add(new SolidWall(), 3, 1 );
         Game.map.add(new SolidWall(), 1, 3 );
+        Game.map.add(new SolidWall(), 1, 5 );
+        Game.map.add(new SolidWall(), 3, 1 );
         Game.map.add(new SolidWall(), 3, 3 );
+        Game.map.add(new SolidWall(), 3, 5 );
+        
+        Game.map.add(new SolidWall(), 5, 1 );
+        Game.map.add(new SolidWall(), 5, 3 );
+        Game.map.add(new SolidWall(), 5, 5 );
+        Game.map.add(new SolidWall(), 7, 1 );
+        Game.map.add(new SolidWall(), 7, 3 );
+        Game.map.add(new SolidWall(), 7, 5 );
+        
+        Game.map.add(new SolidWall(), 9, 1 );
+        Game.map.add(new SolidWall(), 9, 3 );
+        Game.map.add(new SolidWall(), 9, 5 );
+        Game.map.add(new SolidWall(), 11, 1 );
+        Game.map.add(new SolidWall(), 11, 3 );
+        Game.map.add(new SolidWall(), 11, 5 );
+        
+        Game.map.add(new Wall(), 0, 2 );
+        Game.map.add(new Wall(), 1, 2 );
+        Game.map.add(new Wall(), 2, 2 );
+        
      
         GameSession.init();
         if (GameSession.isCreator) {

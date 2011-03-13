@@ -13,10 +13,24 @@ Map.prototype ={
 	add: function(obj, x, y){
 		this.array[x][y] = obj;
 	},
-	remove: function(x, y){
-		var o = this.array[x][y];
-		this.array[x][y] = null;
+	remove: function(boxX, boxY){
+		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
+			return null;
+		}
+		var o = this.array[boxX][boxY];
+		this.array[boxX][boxY] = null;
 		return o;
+	},
+	blow: function(boxX, boxY){
+		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
+			return null;
+		}
+		var go = this.array[boxX][boxY];
+		if(go instanceof Wall){
+			this.array[boxX][boxY] = null;
+			return go;
+		}
+		return null;
 	},
 	drawRect: function(ctx, fillStyle, x, y, w, h){
         ctx.fillStyle = fillStyle;
@@ -42,7 +56,7 @@ Map.prototype ={
 		return Math.floor(posY / this.boxH);
 	},
 	isFree: function(boxX, boxY){
-		if(boxX < 0 || boxY < 0){
+		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
 			return false;
 		}
 		return this.array[boxX][boxY] == null;
