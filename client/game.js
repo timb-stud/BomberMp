@@ -61,7 +61,8 @@ var Game = {
         up: false,
         down: false,
         left: false,
-        right: false
+        right: false,
+        bomb: false
     },
     init: function(){
         var canvas = $("#gameCanvas")[0];
@@ -139,40 +140,50 @@ var Game = {
         if (Game.keyPressed.right) {
             Game.player.moveRight();
         }
+        if(Game.keyPressed.bomb) {
+        	Game.player.dropBomb();
+        }
     }
 };
 
 function onKeyDown(evt){
-    if (evt.keyCode == 38) {
-        Game.keyPressed.up = true;
-    }
-    if (evt.keyCode == 40) {
-        Game.keyPressed.down = true;
-    }
-    if (evt.keyCode == 37) {
-        Game.keyPressed.left = true;
-    }
-    if (evt.keyCode == 39) {
-        Game.keyPressed.right = true;
-    }
+	switch(evt.keyCode){
+		case 32:
+			Game.keyPressed.bomb = true;
+			break;
+		case 37:
+			Game.keyPressed.left = true;
+			break;
+		case 38:
+			Game.keyPressed.up = true;
+			break;
+		case 39:
+			Game.keyPressed.right = true;
+			break;
+		case 40:
+			Game.keyPressed.down = true;
+			break;
+	}
 }
 
 function onKeyUp(evt){
-    if (evt.keyCode == 38) {
-        Game.keyPressed.up = false;
-    }
-    if (evt.keyCode == 40) {
-        Game.keyPressed.down = false;
-    }
-    if (evt.keyCode == 37) {
-        Game.keyPressed.left = false;
-    }
-    if (evt.keyCode == 39) {
-        Game.keyPressed.right = false;
-    }
-    if (evt.keyCode == 32) {
-        Game.player.dropBomb();
-    }
+	switch(evt.keyCode){
+		case 32:
+			Game.keyPressed.bomb = false;
+			break;
+		case 37:
+			Game.keyPressed.left = false;
+			break;
+		case 38:
+			Game.keyPressed.up = false;
+			break;
+		case 39:
+			Game.keyPressed.right = false;
+			break;
+		case 40:
+			Game.keyPressed.down = false;
+			break;
+	}
 }
 
 $(document).keydown(onKeyDown);

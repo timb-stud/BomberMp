@@ -59,9 +59,9 @@ SpawnPoint.prototype = {
 };
 SpawnPoint.prototype.__proto__ = GameObject.prototype;
 
-function Bomb(x, y, timer, radius, map){
-    this.x = x;
-    this.y = y;
+function Bomb(boxX, boxY, timer, radius, map){
+    this.boxX = boxX;
+    this.boxY = boxY;
     this.timer = timer;
     this.radius = radius;
     this.map = map;
@@ -69,23 +69,18 @@ function Bomb(x, y, timer, radius, map){
 };
 Bomb.prototype = {
 	color: "#FF0000",
-    isExploded: function(){
-    	return ;
-    },
+	isExploded: false,
     update: function(){
         if (this.timer < 1) {
-			var boxX = this.map.toBoxX(this.x),
-				boxY = this.map.toBoxY(this.y);
-			this.map.blow(boxX - 1, boxY);
-			this.map.blow(boxX + 1, boxY);
-			this.map.blow(boxX, boxY - 1);
-			this.map.blow(boxX, boxY + 1);
+        	console.log("BOOM");
+			this.map.blow(this.boxX - 1, this.boxY);
+			this.map.blow(this.boxX + 1, this.boxY);
+			this.map.blow(this.boxX, this.boxY - 1);
+			this.map.blow(this.boxX, this.boxY + 1);
+			this.isExploded = true;
         }else{
         	this.timer--;
         }
-    },
-    draw: function(ctx){
-        this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
     }
 };
 Bomb.prototype.__proto__ = GameObject.prototype;
@@ -105,7 +100,7 @@ var BombPdu = function(bomb){
     	return this.timer == bomb.timer;
     };
 }
-BombPdu.prototype = new Bomb;
+BombPdu.prototype.__proto__ = Bomb.prototype;
 
 function PlayerPdu(player){
 	this.player = player;
@@ -155,8 +150,6 @@ function Player(spawnPoint, map){
     this.pdu = new PlayerPdu(this);
 };
 Player.prototype = {
-	w: 20,
-	h: 20,
 	vMax: 2,
 	vx: 0,
 	vy: 0,
@@ -179,15 +172,12 @@ Player.prototype = {
         this.vx = this.vMax;
     },
     dropBomb: function(){
-        var xMid = this.x;
-        var yMid = this.y;
-        xMid += Math.floor(this.w / 2);
-        yMid += Math.floor(this.h / 2);
-        var bombSpawnX = Math.floor(xMid / 20);
-        var bombSpawnY = Math.floor(yMid / 20);
-        bombSpawnX *= 20;
-        bombSpawnY *= 20;
-        this.bomb = new Bomb(bombSpawnX, bombSpawnY, this.bombTimer,  this.bombRadius, this.map);
+    	if(!this.bomb){
+    		var boxX = this.map.toBoxX(this.x + (this.w / 2)),
+        	boxY = this.map.toBoxY(this.y + (this.h / 2));
+        	this.bomb = new Bomb(boxX, boxY, this.bombTimer,  this.bombRadius, this.map);
+        	this.map.add(this.bomb, boxX, boxY);
+    	}
     },
     update: function(){
     	var newX = this.x + this.vx,
@@ -209,7 +199,8 @@ Player.prototype = {
 
         if (this.bomb) {
             this.bomb.update();
-            if(this.bomb.isExploded()){
+            if(this.bomb.isExploded){
+            	this.map.remove(this.bomb.boxX, this.bomb.boxY);
             	this.bomb = null;
             }
         }
@@ -219,9 +210,6 @@ Player.prototype = {
     },
     draw: function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
-        if (this.bomb) {
-            this.bomb.draw(ctx);
-        }
     }
 };
 Player.prototype.__proto__ = GameObject.prototype;

@@ -10,8 +10,8 @@ function Map(dimX, dimY){
 Map.prototype ={
 	boxH: 20,
 	boxW: 20,
-	add: function(obj, x, y){
-		this.array[x][y] = obj;
+	add: function(obj, boxX, boxY){
+		this.array[boxX][boxY] = obj;
 	},
 	remove: function(boxX, boxY){
 		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
