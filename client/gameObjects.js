@@ -1,6 +1,6 @@
-function GameObject(){
+function Drawable(){
 };
-GameObject.prototype = {
+Drawable.prototype = {
 	x: 0,
 	y: 0,
 	w: 20,
@@ -15,27 +15,6 @@ GameObject.prototype = {
     },
     draw: function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
-    },
-    isLeftOf: function(go){
-        return this.x + this.w <= go.x;
-    },
-    isAbove: function(go){
-        return this.y + this.h <= go.y;
-    },
-    touches: function(go){
-        if (this.isLeftOf(go)) {
-            return false;
-        }
-        if (go.isLeftOf(this)) {
-            return false;
-        }
-        if (this.isAbove(go)) {
-            return false;
-        }
-        if (go.isAbove(this)) {
-            return false;
-        }
-        return true;
     }
 };
 
@@ -44,20 +23,20 @@ var Wall = function(){
 Wall.prototype = {
 	color: "#8B4513"
 };
+
 function SolidWall(){
 };
 SolidWall.prototype = {
 	color: "#c0c0c0"
 }
 
-var SpawnPoint = function(x, y){
+function SpawnPoint(x, y){
     this.x = x;
     this.y = y;
 };
 SpawnPoint.prototype = {
 	color: "#FF7F50"
 };
-SpawnPoint.prototype.__proto__ = GameObject.prototype;
 
 function Bomb(boxX, boxY, timer, radius, map){
     this.boxX = boxX;
@@ -83,7 +62,6 @@ Bomb.prototype = {
         }
     }
 };
-Bomb.prototype.__proto__ = GameObject.prototype;
 
 var BombPdu = function(bomb){
 	this.x = bomb.x;
@@ -101,47 +79,6 @@ var BombPdu = function(bomb){
     };
 }
 BombPdu.prototype.__proto__ = Bomb.prototype;
-
-function PlayerPdu(player){
-	this.player = player;
-    this.x = player.x;
-    this.y = player.y;
-    this.vx = player.vx;
-    this.vy = player.vy;
-    this.acx = player.acx;
-    this.acy = player.acy;
-}
-PlayerPdu.prototype = {
-	color: "#808080",
-	update: function(){
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vx *= this.acx;
-        this.vy *= this.acy;
-    },
-    isInEpsilon: function(){
-        var x = Math.abs(this.x - this.player.x),
-        	y = Math.abs(this.y - this.player.y),
-        	vx = Math.abs(this.vx - this.player.vx),
-        	vy = Math.abs(this.vy - this.player.vy),
-        	e = x + y + vx + vy;
-        if (e > 3) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    },
-    refresh: function(){
-        this.x = this.player.x;
-        this.y = this.player.y;
-        this.vx = this.player.vx;
-        this.vy = this.player.vy;
-        this.acx = this.player.acx;
-        this.acy = this.player.acy;
-    }
-};
-PlayerPdu.prototype.__proto__ = GameObject.prototype;
 
 function Player(spawnPoint, map){
     this.x = spawnPoint.x;
@@ -207,9 +144,47 @@ Player.prototype = {
         if(this.pdu){
         	this.pdu.update();
         }
-    },
-    draw: function(ctx){
-        this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
     }
 };
-Player.prototype.__proto__ = GameObject.prototype;
+Player.prototype.__proto__ = Drawable.prototype;
+
+function PlayerPdu(player){
+	this.player = player;
+    this.x = player.x;
+    this.y = player.y;
+    this.vx = player.vx;
+    this.vy = player.vy;
+    this.acx = player.acx;
+    this.acy = player.acy;
+}
+PlayerPdu.prototype = {
+	color: "#808080",
+	update: function(){
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= this.acx;
+        this.vy *= this.acy;
+    },
+    isInEpsilon: function(){
+        var x = Math.abs(this.x - this.player.x),
+        	y = Math.abs(this.y - this.player.y),
+        	vx = Math.abs(this.vx - this.player.vx),
+        	vy = Math.abs(this.vy - this.player.vy),
+        	e = x + y + vx + vy;
+        if (e > 3) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    },
+    refresh: function(){
+        this.x = this.player.x;
+        this.y = this.player.y;
+        this.vx = this.player.vx;
+        this.vy = this.player.vy;
+        this.acx = this.player.acx;
+        this.acy = this.player.acy;
+    }
+};
+PlayerPdu.prototype.__proto__ = Player.prototype;
