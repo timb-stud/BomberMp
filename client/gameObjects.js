@@ -38,28 +38,113 @@ SpawnPoint.prototype = {
 	color: "#FF7F50"
 };
 
+function Fire(){
+};
+Fire.prototype = {
+	color: "#FF0000"
+}
+
 function Bomb(boxX, boxY, timer, radius, map){
     this.boxX = boxX;
     this.boxY = boxY;
     this.timer = timer;
-    this.radius = radius;
+    this.radiusMax = radius;
     this.map = map;
-    this.pdu = new BombPdu(this);
 };
 Bomb.prototype = {
-	color: "#FF0000",
-	isExploded: false,
+	color: "#000000",
+	radiusLeft: 1,
+	leftDone: false,
+	radiusRight: 1,
+	rightDone: false,
+	radiusUp: 1,
+	upDone: false,
+	radiusDown: 1,
+	downDone: false,
     update: function(){
         if (this.timer < 1) {
-        	console.log("BOOM");
-			this.map.blow(this.boxX - 1, this.boxY);
-			this.map.blow(this.boxX + 1, this.boxY);
-			this.map.blow(this.boxX, this.boxY - 1);
-			this.map.blow(this.boxX, this.boxY + 1);
-			this.isExploded = true;
+	    console.log("UPDATE");
+            var left = this.map.get(this.boxX - this.radiusLeft, this.boxY),
+                right = this.map.get(this.boxX + this.radiusRight, this.boxY),
+                up = this.map.get(this.boxX, this.boxY - this.radiusUp),
+                down = this.map.get(this.boxX, this.boxY + this.radiusDown);
+            if(!this.leftDone){
+                if(left instanceof Wall){
+                    this.map.set(new Fire(), this.boxX - this.radiusLeft, this.boxY);
+		    this.radiusLeft++;
+                    this.leftDone = true;
+                }
+                if(!left){
+                    this.map.set(new Fire(), this.boxX - this.radiusLeft, this.boxY)
+                    this.radiusLeft++;
+                }
+                if(this.radiusLeft > this.radiusMax || left instanceof SolidWall){
+                    this.leftDone = true;
+                }
+            }
+            if(!this.rightDone){
+                if(right instanceof Wall){
+                    this.map.set(new Fire(), this.boxX + this.radiusRight, this.boxY);
+		    this.radiusRight++;
+                    this.rightDone = true;
+                }
+                if(!right){
+                    this.map.set(new Fire(), this.boxX + this.radiusRight, this.boxY);
+                    this.radiusRight++;
+                }
+                if(this.radiusRight > this.radiusMax || right instanceof SolidWall){
+                    this.rightDone = true;
+                }
+            }
+            if(!this.upDone){
+                if(up instanceof Wall){
+                    this.map.set(new Fire(), this.boxX, this.boxY - this.radiusUp);
+		    this.radiusUp++;
+                    this.upDone = true;
+                }
+                if(!up){
+                    this.map.set(new Fire(), this.boxX, this.boxY - this.radiusUp);
+                    this.radiusUp++;
+                }
+                if(this.radiusUp > this.radiusMax || up instanceof SolidWall){
+                    this.upDone = true;
+                }
+            }
+            if(!this.downDone){
+                if(down instanceof Wall){
+                    this.map.set(new Fire(), this.boxX, this.boxY + this.radiusDown);
+		    this.radiusDown++;
+                    this.downDone = true;
+                }
+                if(!down){
+                    this.map.set(new Fire(), this.boxX, this.boxY + this.radiusDown);
+                    this.radiusDown++;
+                }
+                if(this.radiusDown > this.radiusMax || down instanceof SolidWall){
+                    this.downDone = true;
+                }
+            }
+            if(this.isExploded()){
+                for(var i = this.radiusLeft -1; i > 0; i--){
+                    this.map.remove(this.boxX - i, this.boxY)
+                }
+                for(var i = this.radiusRight -1; i > 0; i--){
+                    this.map.remove(this.boxX + i, this.boxY)
+                }
+                for(var i = this.radiusUp -1; i > 0; i--){
+                    this.map.remove(this.boxX, this.boxY - i)
+                }
+                for(var i = this.radiusDown -1; i > 0; i--){
+                    this.map.remove(this.boxX, this.boxY + i)
+                }
+
+            }
         }else{
-        	this.timer--;
+            this.timer--;
         }
+    },
+    isExploded: function(){
+        return this.leftDone && this.rightDone && this.upDone && this.downDone;
     }
 };
 
@@ -75,7 +160,7 @@ Player.prototype = {
 	vy: 0,
 	acx: 0.9,
 	acy: 0.9,
-	color: "#000000",
+	color: "#0000FF",
 	bomb: null,
 	bombRadius: 2,
 	bombTimer: 50,
@@ -96,7 +181,8 @@ Player.prototype = {
     		var boxX = this.map.toBoxX(this.x + (this.w / 2)),
         	boxY = this.map.toBoxY(this.y + (this.h / 2));
         	this.bomb = new Bomb(boxX, boxY, this.bombTimer,  this.bombRadius, this.map);
-        	this.map.add(this.bomb, boxX, boxY);
+        	this.map.set(this.bomb, boxX, boxY);
+		return this.bomb;
     	}
     },
     update: function(){
@@ -104,22 +190,21 @@ Player.prototype = {
     		newY = this.y + this.vy,
     		boxX = this.map.toBoxX(this.x + 10),
     		boxY = this.map.toBoxY(this.y + 10);
-    	if(this.map.isFree(boxX + 1, boxY) && newX > this.x || (this.map.isFree(boxX - 1, boxY) && newX < this.x)){
+    	if(this.map.isEmpty(boxX + 1, boxY) && newX > this.x || (this.map.isEmpty(boxX - 1, boxY) && newX < this.x)){
     		this.x = newX;
     	}else{
     		this.x = boxX * 20;
     	}
-    	if(this.map.isFree(boxX, boxY + 1) && newY > this.y || this.map.isFree(boxX, boxY - 1) && newY < this.y){
+    	if(this.map.isEmpty(boxX, boxY + 1) && newY > this.y || this.map.isEmpty(boxX, boxY - 1) && newY < this.y){
     		this.y = newY;
     	}else{
     		this.y = boxY * 20;
     	}
     	this.vx *= this.acx;
     	this.vy *= this.acy;
-
         if (this.bomb) {
             this.bomb.update();
-            if(this.bomb.isExploded){
+            if(this.bomb.isExploded()){
             	this.map.remove(this.bomb.boxX, this.bomb.boxY);
             	this.bomb = null;
             }
@@ -131,22 +216,31 @@ Player.prototype = {
 };
 Player.prototype.__proto__ = Drawable.prototype;
 
-function PlayerPdu(player){
-	this.player = player;
+function PlayerPdu(player, map){
+    this.player = player;
     this.x = player.x;
     this.y = player.y;
     this.vx = player.vx;
     this.vy = player.vy;
     this.acx = player.acx;
     this.acy = player.acy;
+    this.map = map;
 }
 PlayerPdu.prototype = {
-	color: "#808080",
-	update: function(){
+    color: "#808080",
+    bomb: null,
+    update: function(){
         this.x += this.vx;
         this.y += this.vy;
         this.vx *= this.acx;
         this.vy *= this.acy;
+	if (this.bomb) {
+	    this.bomb.update();
+	    if(this.bomb.isExploded()){
+		this.map.remove(this.bomb.boxX, this.bomb.boxY);
+		this.bomb = null;
+	    }
+	}
     },
     isInEpsilon: function(){
         var x = Math.abs(this.x - this.player.x),

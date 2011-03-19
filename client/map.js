@@ -10,27 +10,27 @@ function Map(dimX, dimY){
 Map.prototype ={
 	boxH: 20,
 	boxW: 20,
-	add: function(obj, boxX, boxY){
-		this.array[boxX][boxY] = obj;
+	set: function(obj, boxX, boxY){
+                if(this.isInBounds(boxX, boxY)){
+                    this.array[boxX][boxY] = obj;
+                }
+	},
+	get: function(boxX, boxY){
+		if(!this.isInBounds(boxX, boxY)){
+			return null
+		}
+		return this.array[boxX][boxY];
 	},
 	remove: function(boxX, boxY){
-		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
+		if(!this.isInBounds(boxX, boxY)){
 			return null;
 		}
 		var o = this.array[boxX][boxY];
 		this.array[boxX][boxY] = null;
 		return o;
 	},
-	blow: function(boxX, boxY){
-		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
-			return null;
-		}
-		var go = this.array[boxX][boxY];
-		if(go instanceof Wall){
-			this.array[boxX][boxY] = null;
-			return go;
-		}
-		return null;
+	isInBounds: function(boxX, boxY){
+		return (boxX >= 0 && boxY >= 0 && boxX < this.array.length && boxY < this.array[0].length);
 	},
 	drawRect: function(ctx, fillStyle, x, y, w, h){
         ctx.fillStyle = fillStyle;
@@ -55,10 +55,10 @@ Map.prototype ={
 	toBoxY: function(posY){
 		return Math.floor(posY / this.boxH);
 	},
-	isFree: function(boxX, boxY){
-		if(boxX < 0 || boxY < 0 || boxX >= this.array.length || boxY >= this.array[0].length){
+	isEmpty: function(boxX, boxY){
+		if(!this.isInBounds(boxX, boxY)){
 			return false;
 		}
-		return this.array[boxX][boxY] == null;
+		return (this.array[boxX][boxY] == null);
 	}
 }

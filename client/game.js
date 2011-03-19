@@ -20,7 +20,22 @@ var GameSession = {
         }
     },
     msgHandler: function(json){
-        Game.pdu = new PlayerPdu(json);
+	if(json.timer){ //isBomb
+	    var bomb = new Bomb(json.boxX, json.boxY, json.timer, json.radiusMax, Game.map);
+	    Game.pdu.bomb = bomb;
+	    Game.map.set(bomb, bomb.boxX, bomb.boxY);
+	}else{
+	    if(!Game.pdu){
+		Game.pdu = new PlayerPdu(json, Game.map);
+	    }else{
+		Game.pdu.x = json.x;
+		Game.pdu.y = json.y;
+		Game.pdu.vx = json.vx;
+		Game.pdu.vy = json.vy;
+		Game.pdu.acx = json.acx;
+		Game.pdu.acy = json.acy;
+	    }
+	}
     },
     userHandler: function(action, uid){
         if (action == "join") {
@@ -45,6 +60,18 @@ var GameSession = {
     	};
     	var msg = JSON.stringify(json);
 		GameSession.session.send(msg);
+    },
+    sendBomb: function(bomb){
+	if(bomb){
+	    var json = {
+		boxX: bomb.boxX,
+		boxY: bomb.boxY,
+		timer: bomb.timer,
+		radiusMax: bomb.radiusMax
+	    };
+	    var msg = JSON.stringify(json);
+	    GameSession.session.send(msg);
+	}
     }
 }
 
@@ -71,30 +98,30 @@ var Game = {
         Game.ctx = canvas.getContext("2d");
         Game.map = new Map(Game.w / 20, Game.h / 20);
         
-        Game.map.add(new SolidWall(), 1, 1 );
-        Game.map.add(new SolidWall(), 1, 3 );
-        Game.map.add(new SolidWall(), 1, 5 );
-        Game.map.add(new SolidWall(), 3, 1 );
-        Game.map.add(new SolidWall(), 3, 3 );
-        Game.map.add(new SolidWall(), 3, 5 );
+        Game.map.set(new SolidWall(), 1, 1 );
+        Game.map.set(new SolidWall(), 1, 3 );
+        Game.map.set(new SolidWall(), 1, 5 );
+        Game.map.set(new SolidWall(), 3, 1 );
+        Game.map.set(new SolidWall(), 3, 3 );
+        Game.map.set(new SolidWall(), 3, 5 );
         
-        Game.map.add(new SolidWall(), 5, 1 );
-        Game.map.add(new SolidWall(), 5, 3 );
-        Game.map.add(new SolidWall(), 5, 5 );
-        Game.map.add(new SolidWall(), 7, 1 );
-        Game.map.add(new SolidWall(), 7, 3 );
-        Game.map.add(new SolidWall(), 7, 5 );
+        Game.map.set(new SolidWall(), 5, 1 );
+        Game.map.set(new SolidWall(), 5, 3 );
+        Game.map.set(new SolidWall(), 5, 5 );
+        Game.map.set(new SolidWall(), 7, 1 );
+        Game.map.set(new SolidWall(), 7, 3 );
+        Game.map.set(new SolidWall(), 7, 5 );
         
-        Game.map.add(new SolidWall(), 9, 1 );
-        Game.map.add(new SolidWall(), 9, 3 );
-        Game.map.add(new SolidWall(), 9, 5 );
-        Game.map.add(new SolidWall(), 11, 1 );
-        Game.map.add(new SolidWall(), 11, 3 );
-        Game.map.add(new SolidWall(), 11, 5 );
+        Game.map.set(new SolidWall(), 9, 1 );
+        Game.map.set(new SolidWall(), 9, 3 );
+        Game.map.set(new SolidWall(), 9, 5 );
+        Game.map.set(new SolidWall(), 11, 1 );
+        Game.map.set(new SolidWall(), 11, 3 );
+        Game.map.set(new SolidWall(), 11, 5 );
         
-        Game.map.add(new Wall(), 0, 2 );
-        Game.map.add(new Wall(), 1, 2 );
-        Game.map.add(new Wall(), 2, 2 );
+        Game.map.set(new Wall(), 0, 2 );
+        Game.map.set(new Wall(), 1, 2 );
+        Game.map.set(new Wall(), 2, 2 );
         
      
         GameSession.init();
@@ -141,7 +168,8 @@ var Game = {
             Game.player.moveRight();
         }
         if(Game.keyPressed.bomb) {
-        	Game.player.dropBomb();
+	    var bomb = Game.player.dropBomb();
+	    GameSession.sendBomb(bomb);
         }
     }
 };
