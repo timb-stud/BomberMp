@@ -63,23 +63,6 @@ Bomb.prototype = {
     }
 };
 
-var BombPdu = function(bomb){
-	this.x = bomb.x;
-    this.y = bomb.y;
-    this.timer = bomb.timer;
-    this.radius = bomb.radius;
-    this.refresh = function(){
-    	this.x = bomb.x;
-    	this.y = bomb.y;
-    	this.timer = bomb.timer;
-    	this.radius = bomb.raduis;
-    };
-    this.isInEpsilon = function(){
-    	return this.timer == bomb.timer;
-    };
-}
-BombPdu.prototype.__proto__ = Bomb.prototype;
-
 function Player(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
