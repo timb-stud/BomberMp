@@ -183,7 +183,7 @@ function checkUsers(){
 				}
 				if(users[j].timeoutTime > 5){
 					sessions[i] = null;
-					console.log("KILLED", sid)
+					console.log("KILLED", i)
 				}
 			}
 		}

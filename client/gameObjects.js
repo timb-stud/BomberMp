@@ -63,6 +63,7 @@ Bomb.prototype = {
 	downDone: false,
     update: function(){
         if (this.timer < 1) {
+        	console.log("bomb");
             var leftBoxX = this.boxX - this.radiusLeft,
             	rightBoxX = this.boxX + this.radiusRight,
             	upBoxY = this.boxY - this.radiusUp,
@@ -207,30 +208,48 @@ function Player(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
     this.map = map;
-    this.pdu = new PlayerPdu(this, this.map);
-    map.player = this;
 };
 Player.prototype = {
+	frags: 0,
+	kills: 0,
+	pxCounter: 0,
 	vMax: 2,
-	vx: 0,
-	vy: 0,
-	acx: 0.9,
-	acy: 0.9,
 	color: "#0000FF",
 	bomb: null,
 	bombRadius: 2,
 	bombTimer: 50,
+	move: null,
 	moveUp: function(){
-        this.vy = -this.vMax;
+		var boxX = this.map.toBoxX(this.x),
+    		boxY = this.map.toBoxY(this.y);
+		if(!this.move && this.map.isEmpty(boxX, boxY - 1)){
+			this.move = "up";
+			return true;
+		}
     },
     moveDown: function(){
-        this.vy = this.vMax;
+    	var boxX = this.map.toBoxX(this.x),
+    		boxY = this.map.toBoxY(this.y);
+        if(!this.move && this.map.isEmpty(boxX, boxY + 1)){
+			this.move = "down";
+			return true;
+		}
     },
     moveLeft: function(){
-        this.vx = -this.vMax;
+    	var boxX = this.map.toBoxX(this.x),
+    		boxY = this.map.toBoxY(this.y);
+        if(!this.move && this.map.isEmpty(boxX - 1, boxY)){
+			this.move = "left";
+			return true;
+		}
     },
     moveRight: function(){
-        this.vx = this.vMax;
+    	var boxX = this.map.toBoxX(this.x),
+    		boxY = this.map.toBoxY(this.y);
+        if(!this.move && this.map.isEmpty(boxX + 1 , boxY)){
+			this.move = "right";
+			return true;
+		}
     },
     dropBomb: function(){
     	if(!this.bomb){
@@ -238,26 +257,30 @@ Player.prototype = {
         	boxY = this.map.toBoxY(this.y + (this.h / 2));
         	this.bomb = new Bomb(boxX, boxY, this.bombTimer,  this.bombRadius, this.map);
         	this.map.set(this.bomb, boxX, boxY);
-		return this.bomb;
+			return this.bomb;
     	}
     },
     update: function(){
-    	var newX = this.x + this.vx,
-    		newY = this.y + this.vy,
-    		boxX = this.map.toBoxX(this.x + 10),
-    		boxY = this.map.toBoxY(this.y + 10);
-    	if(this.map.isEmpty(boxX + 1, boxY) && newX > this.x || (this.map.isEmpty(boxX - 1, boxY) && newX < this.x)){
-    		this.x = newX;
-    	}else{
-    		this.x = boxX * 20;
+    	if(this.move){
+    		switch(this.move){
+    			case "up":
+    				this.y -= this.vMax;
+    				this.updatePxCounter();
+    				break;
+    			case "down":
+    				this.y += this.vMax;
+    				this.updatePxCounter();
+    				break;
+    			case "left":
+    				this.x -= this.vMax;
+    				this.updatePxCounter();
+    				break;
+    			case "right":
+    				this.x += this.vMax;
+    				this.updatePxCounter();
+    				break;
+    		}
     	}
-    	if(this.map.isEmpty(boxX, boxY + 1) && newY > this.y || this.map.isEmpty(boxX, boxY - 1) && newY < this.y){
-    		this.y = newY;
-    	}else{
-    		this.y = boxY * 20;
-    	}
-    	this.vx *= this.acx;
-    	this.vy *= this.acy;
         if (this.bomb) {
             this.bomb.update();
             if(this.bomb.isExploded()){
@@ -265,66 +288,34 @@ Player.prototype = {
             	this.bomb = null;
             }
         }
-        if(this.pdu){
-        	this.pdu.update();
-        }
+    },
+    updatePxCounter: function(){
+    	this.pxCounter += this.vMax;
+		if(this.pxCounter >= 20){
+    		this.move = null;
+    		this.pxCounter = 0;
+    	}
     },
     kill: function(){
-    	alert("YOU WERE KILLED");
+    	console.log(this);
+    	if(this instanceof Player){
+    		this.kills++;
+    		this.map.pdu.frags++;
+    	}
     }
 };
 Player.prototype.__proto__ = Drawable.prototype;
 
-function PlayerPdu(player, map){
-    this.player = player;
-    this.x = player.x;
-    this.y = player.y;
-    this.vx = player.vx;
-    this.vy = player.vy;
-    this.acx = player.acx;
-    this.acy = player.acy;
+function PlayerPdu(spawnPoint, map){
+    this.x = spawnPoint.x;
+    this.y = spawnPoint.y;
     this.map = map;
-    this.map.pdu = this;
-}
-PlayerPdu.prototype = {
-    color: "#808080",
-    bomb: null,
-    update: function(){
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vx *= this.acx;
-        this.vy *= this.acy;
-		if (this.bomb) {
-	   		this.bomb.update();
-	    	if(this.bomb.isExploded()){
-			this.map.remove(this.bomb.boxX, this.bomb.boxY);
-			this.bomb = null;
-	    }
-	}
-    },
-    isInEpsilon: function(){
-        var x = Math.abs(this.x - this.player.x),
-        	y = Math.abs(this.y - this.player.y),
-        	vx = Math.abs(this.vx - this.player.vx),
-        	vy = Math.abs(this.vy - this.player.vy),
-        	e = x + y + vx + vy;
-        if (e > 3) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    },
-    refresh: function(){
-        this.x = this.player.x;
-        this.y = this.player.y;
-        this.vx = this.player.vx;
-        this.vy = this.player.vy;
-        this.acx = this.player.acx;
-        this.acy = this.player.acy;
-    },
-    kill: function(){
-    	alert("YOU KILLED YOUR OPPONENT");
-    }
+    this.color = "00FF00";
 };
+PlayerPdu.prototype = {
+	kill: function(){
+		this.kills++;
+		this.map.player.frags++;
+	}
+}
 PlayerPdu.prototype.__proto__ = Player.prototype;
