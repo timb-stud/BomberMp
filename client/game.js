@@ -4,11 +4,11 @@ var GameSession = {
     init: function(){
         this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
         var sid = GameSession.getSidFromUrl();
-        if (sid) {
+        console.log(sid);
+        if (sid >= 0) {
             GameSession.isCreator = false;
             GameSession.session.join(sid);
-        }
-        else {
+        }else {
             GameSession.isCreator = true;
             GameSession.session.create();
         }
@@ -26,14 +26,14 @@ var GameSession = {
 	    Game.map.set(bomb, bomb.boxX, bomb.boxY);
 	}else{
 	    if(!Game.pdu){
-		Game.pdu = new PlayerPdu(json, Game.map);
+			Game.pdu = new PlayerPdu(json, Game.map);
 	    }else{
-		Game.pdu.x = json.x;
-		Game.pdu.y = json.y;
-		Game.pdu.vx = json.vx;
-		Game.pdu.vy = json.vy;
-		Game.pdu.acx = json.acx;
-		Game.pdu.acy = json.acy;
+			Game.pdu.x = json.x;
+			Game.pdu.y = json.y;
+			Game.pdu.vx = json.vx;
+			Game.pdu.vy = json.vy;
+			Game.pdu.acx = json.acx;
+			Game.pdu.acy = json.acy;
 	    }
 	}
     },
@@ -43,11 +43,11 @@ var GameSession = {
         }
     },
     getSidFromUrl: function(){
-        var params = window.location.search, expr = /sid\=(\d{4})/, sid = 0;
+        var params = window.location.search,
+         	expr = /sid\=(\d+)/;
         if (expr(params)) {
-            sid = expr(params)[1];
+            return expr(params)[1];
         }
-        return sid;
     },
     sendPdu: function(pdu){
     	var json = {

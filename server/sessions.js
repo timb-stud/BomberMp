@@ -1,18 +1,32 @@
 var SessionList = {
-	sessions: [],
+	sessions: new Array(100),
 	addSession: function(){
-		var sid = this.generateSid();
-		var session = new Session(sid);
-		this.sessions.push(session);
-		return session;
+		var sid = this.getFreeSid();
+		if(sid >= 0){
+			var session = new Session(sid);
+			this.sessions[sid] = session;
+			return session;
+		}
 	},
 	getSession: function(sid){
-		for(var i=0; i<this.sessions.length; i++){
-			if(this.sessions[i].sid == sid){
-				return this.sessions[i];
+		if(sid >= 0 && sid < this.sessions.length){
+			return this.sessions[sid];
+		}
+	},
+	removeSession: function(sid){
+		if(sid >= 0 && sid < this.sessions.length){
+			var session = this.sessions[sid];
+			this.sessions[sid] = null;
+			return session;
+		}
+	},
+	getFreeSid: function(){
+		for(var i=0; i < this.sessions.length; i++){
+			if(this.sessions[i] == null){
+				return i;
 			}
 		}
-		return null;
+		return -1;
 	},
 	generateSid: function(){
 		min = 1000;
@@ -74,8 +88,10 @@ User = function(uid){
 var SessionManager = {
 	newSession: function(){
 		var session = SessionList.addSession();
-		var user = session.addUser();
-		return JSON.stringify({"sid": session.sid, "uid": user.uid});
+		if(session){
+			var user = session.addUser();
+			return JSON.stringify({"sid": session.sid, "uid": user.uid});
+		}
 	},
 	joinSession: function(sid){
 		var session = SessionList.getSession(sid);
