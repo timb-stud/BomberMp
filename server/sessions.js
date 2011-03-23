@@ -55,11 +55,7 @@ Session = function(sid){
 	this.alertUsers = function(msg, uid){
 		for(var i=0; i < this.users.length; i++){
 			if(this.users[i].uid != uid){
-				this.users[i].msgQueue.push(msg);
-				if(this.users[i].response){
-					msg = this.users[i].msgQueue.shift();
-					this.users[i].sendMsg(msg);
-				}
+				this.users[i].alert(msg);
 			}
 		}
 	};
@@ -72,17 +68,32 @@ Session = function(sid){
 
 User = function(uid){
 	this.uid = uid;
-	this.response = null;
+	var response = null;
+	this.timeoutTime = 0;
 	this.msgQueue = [];
-	this.sendMsg  = function(msg){
-		if(this.response){
-			var json = JSON.stringify({"msg" : msg});
-			this.response.writeHead(200, {	'Content-Type': 'text/plain',
-											'Access-Control-Allow-Origin' : '*'});
-			this.response.end(json);
-			this.response = null;
+	this.setResponse = function(resp){
+		response = resp;
+		this.timeoutTime = 0;
+	};
+	this.getResponse = function(){
+		return response;
+	};
+	this.alert = function(msg){
+		this.msgQueue.push(msg);
+		if(response){
+			msg = this.msgQueue.shift();
+			this.sendMsg(msg);
 		}
-	}
+	};
+	this.sendMsg = function(msg){
+		if(response){
+			var json = JSON.stringify({"msg" : msg});
+			response.writeHead(200, {	'Content-Type': 'text/plain',
+											'Access-Control-Allow-Origin' : '*'});
+			response.end(json);
+			response = null;
+		}
+	};
 };
 
 var SessionManager = {
@@ -104,7 +115,7 @@ var SessionManager = {
 	poll: function(sid, uid, res){
 		var session = SessionList.getSession(sid);
 		var user = session.getUser(uid);
-		user.response = res;
+		user.setResponse(res);
 		var msg = user.msgQueue.shift();
 		if(msg){
 			user.sendMsg(msg);
@@ -158,5 +169,25 @@ http.createServer(function(req, res){
 		console.log("HTTP END");
 	});	
 }).listen(8124);
+
+setInterval(checkUsers, 2000);
+
+function checkUsers(){
+	var sessions = SessionList.sessions;
+	for(var i=0; i < sessions.length; i++){
+		if(sessions[i]){
+			var users = sessions[i].users;
+			for(var j=0; j < users.length; j++){
+				if(users[j].getResponse() == null){
+					users[j].timeoutTime += 1;
+				}
+				if(users[j].timeoutTime > 5){
+					sessions[i] = null;
+					console.log("KILLED", sid)
+				}
+			}
+		}
+	}
+}
 
 console.log("Server running at port 8124");
