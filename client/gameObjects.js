@@ -63,7 +63,6 @@ Bomb.prototype = {
 	downDone: false,
     update: function(){
         if (this.timer < 1) {
-        	console.log("bomb");
             var leftBoxX = this.boxX - this.radiusLeft,
             	rightBoxX = this.boxX + this.radiusRight,
             	upBoxY = this.boxY - this.radiusUp,
@@ -297,7 +296,6 @@ Player.prototype = {
     	}
     },
     kill: function(){
-    	console.log(this);
     	if(this instanceof Player){
     		this.kills++;
     		this.map.pdu.frags++;
