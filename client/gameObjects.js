@@ -63,19 +63,38 @@ Bomb.prototype = {
 	downDone: false,
     update: function(){
         if (this.timer < 1) {
-	    console.log("UPDATE");
-            var left = this.map.get(this.boxX - this.radiusLeft, this.boxY),
-                right = this.map.get(this.boxX + this.radiusRight, this.boxY),
-                up = this.map.get(this.boxX, this.boxY - this.radiusUp),
-                down = this.map.get(this.boxX, this.boxY + this.radiusDown);
+            var leftBoxX = this.boxX - this.radiusLeft,
+            	rightBoxX = this.boxX + this.radiusRight,
+            	upBoxY = this.boxY - this.radiusUp,
+            	downBoxY = this.boxY + this.radiusDown,
+            	left = this.map.get(leftBoxX, this.boxY),
+                right = this.map.get(rightBoxX, this.boxY),
+                up = this.map.get(this.boxX, upBoxY),
+                down = this.map.get(this.boxX, downBoxY),
+                playerBoxX = this.map.toBoxX(this.map.player.x),
+                playerBoxY = this.map.toBoxY(this.map.player.y),
+                pduBoxX = this.map.toBoxX(this.map.pdu.x),
+                pduBoxY = this.map.toBoxY(this.map.pdu.y);
             if(!this.leftDone){
                 if(left instanceof Wall){
-                    this.map.set(new Fire(), this.boxX - this.radiusLeft, this.boxY);
-		    this.radiusLeft++;
+                    this.map.set(new Fire(), leftBoxX, this.boxY);
+		    		this.radiusLeft++;
                     this.leftDone = true;
                 }
+                if(playerBoxX == leftBoxX && this.boxY == playerBoxY){
+                	this.map.set(new Fire(), leftBoxX, this.boxY);
+		    		this.radiusLeft++;
+                	this.map.player.kill();
+                	this.leftDone = true;
+                }
+                if(pduBoxX == leftBoxX && this.boxY == pduBoxY){
+                	this.map.set(new Fire(), leftBoxX, this.boxY);
+		    		this.radiusLeft++;
+                	this.map.pdu.kill();
+                	this.leftDone = true;
+                }
                 if(!left){
-                    this.map.set(new Fire(), this.boxX - this.radiusLeft, this.boxY)
+                    this.map.set(new Fire(), leftBoxX, this.boxY)
                     this.radiusLeft++;
                 }
                 if(this.radiusLeft > this.radiusMax || left instanceof SolidWall){
@@ -84,12 +103,24 @@ Bomb.prototype = {
             }
             if(!this.rightDone){
                 if(right instanceof Wall){
-                    this.map.set(new Fire(), this.boxX + this.radiusRight, this.boxY);
-		    this.radiusRight++;
+                    this.map.set(new Fire(), rightBoxX, this.boxY);
+		    		this.radiusRight++;
                     this.rightDone = true;
                 }
+                if(playerBoxX == rightBoxX && this.boxY == playerBoxY){
+                	this.map.set(new Fire(), rightBoxX, this.boxY);
+		    		this.radiusRight++;
+                	this.map.player.kill();
+                	this.rightDone = true;
+                }
+                if(pduBoxX == rightBoxX && this.boxY == pduBoxY){
+                	this.map.set(new Fire(), rightBoxX, this.boxY);
+		    		this.radiusRight++;
+                	this.map.pdu.kill();
+                	this.rightDone = true;
+                }
                 if(!right){
-                    this.map.set(new Fire(), this.boxX + this.radiusRight, this.boxY);
+                    this.map.set(new Fire(), rightBoxX, this.boxY);
                     this.radiusRight++;
                 }
                 if(this.radiusRight > this.radiusMax || right instanceof SolidWall){
@@ -98,12 +129,24 @@ Bomb.prototype = {
             }
             if(!this.upDone){
                 if(up instanceof Wall){
-                    this.map.set(new Fire(), this.boxX, this.boxY - this.radiusUp);
-		    this.radiusUp++;
+                    this.map.set(new Fire(), this.boxX, upBoxY);
+		    		this.radiusUp++;
                     this.upDone = true;
                 }
+                if(playerBoxX == this.boxX && upBoxY == playerBoxY){
+                	this.map.set(new Fire(), this.boxX, upBoxY);
+		    		this.radiusUp++;
+                	this.map.player.kill();
+                	this.upDone = true;
+                }
+                if(pduBoxX == this.boxX && upBoxY == pduBoxY){
+                	this.map.set(new Fire(), this.boxX, upBoxY);
+		    		this.radiusUp++;
+                	this.map.pdu.kill();
+                	this.upDone = true;
+                }
                 if(!up){
-                    this.map.set(new Fire(), this.boxX, this.boxY - this.radiusUp);
+                    this.map.set(new Fire(), this.boxX, upBoxY);
                     this.radiusUp++;
                 }
                 if(this.radiusUp > this.radiusMax || up instanceof SolidWall){
@@ -112,12 +155,24 @@ Bomb.prototype = {
             }
             if(!this.downDone){
                 if(down instanceof Wall){
-                    this.map.set(new Fire(), this.boxX, this.boxY + this.radiusDown);
-		    this.radiusDown++;
+                    this.map.set(new Fire(), this.boxX, downBoxY);
+		    		this.radiusDown++;
                     this.downDone = true;
                 }
+                if(playerBoxX == this.boxX && downBoxY == playerBoxY){
+                	this.map.set(new Fire(), this.boxX, downBoxY);
+		    		this.radiusDown++;
+                	this.map.player.kill();
+                	this.downDone = true;
+                }
+                if(pduBoxX == this.boxX && downBoxY == pduBoxY){
+                	this.map.set(new Fire(), this.boxX, downBoxY);
+		    		this.radiusDown++;
+                	this.map.pdu.kill();
+                	this.downDone = true;
+                }
                 if(!down){
-                    this.map.set(new Fire(), this.boxX, this.boxY + this.radiusDown);
+                    this.map.set(new Fire(), this.boxX, downBoxY);
                     this.radiusDown++;
                 }
                 if(this.radiusDown > this.radiusMax || down instanceof SolidWall){
@@ -152,7 +207,8 @@ function Player(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
     this.map = map;
-    this.pdu = new PlayerPdu(this);
+    this.pdu = new PlayerPdu(this, this.map);
+    map.player = this;
 };
 Player.prototype = {
 	vMax: 2,
@@ -212,6 +268,9 @@ Player.prototype = {
         if(this.pdu){
         	this.pdu.update();
         }
+    },
+    kill: function(){
+    	alert("YOU WERE KILLED");
     }
 };
 Player.prototype.__proto__ = Drawable.prototype;
@@ -225,6 +284,7 @@ function PlayerPdu(player, map){
     this.acx = player.acx;
     this.acy = player.acy;
     this.map = map;
+    this.map.pdu = this;
 }
 PlayerPdu.prototype = {
     color: "#808080",
@@ -234,11 +294,11 @@ PlayerPdu.prototype = {
         this.y += this.vy;
         this.vx *= this.acx;
         this.vy *= this.acy;
-	if (this.bomb) {
-	    this.bomb.update();
-	    if(this.bomb.isExploded()){
-		this.map.remove(this.bomb.boxX, this.bomb.boxY);
-		this.bomb = null;
+		if (this.bomb) {
+	   		this.bomb.update();
+	    	if(this.bomb.isExploded()){
+			this.map.remove(this.bomb.boxX, this.bomb.boxY);
+			this.bomb = null;
 	    }
 	}
     },
@@ -262,6 +322,9 @@ PlayerPdu.prototype = {
         this.vy = this.player.vy;
         this.acx = this.player.acx;
         this.acy = this.player.acy;
+    },
+    kill: function(){
+    	alert("YOU KILLED YOUR OPPONENT");
     }
 };
 PlayerPdu.prototype.__proto__ = Player.prototype;

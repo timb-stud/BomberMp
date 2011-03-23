@@ -62,16 +62,16 @@ var GameSession = {
 		GameSession.session.send(msg);
     },
     sendBomb: function(bomb){
-	if(bomb){
-	    var json = {
-		boxX: bomb.boxX,
-		boxY: bomb.boxY,
-		timer: bomb.timer,
-		radiusMax: bomb.radiusMax
-	    };
-	    var msg = JSON.stringify(json);
-	    GameSession.session.send(msg);
-	}
+		if(bomb){
+	  		var json = {
+				boxX: bomb.boxX,
+				boxY: bomb.boxY,
+				timer: bomb.timer,
+				radiusMax: bomb.radiusMax
+	    	};
+	    	var msg = JSON.stringify(json);
+	   		GameSession.session.send(msg);
+		}
     }
 }
 
@@ -168,8 +168,8 @@ var Game = {
             Game.player.moveRight();
         }
         if(Game.keyPressed.bomb) {
-	    var bomb = Game.player.dropBomb();
-	    GameSession.sendBomb(bomb);
+	    	var bomb = Game.player.dropBomb();
+	    	GameSession.sendBomb(bomb);
         }
     }
 };

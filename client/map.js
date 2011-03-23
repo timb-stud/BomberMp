@@ -1,4 +1,4 @@
-function Map(dimX, dimY){
+function Map(dimX, dimY, player, pdu){
 	this.array = new Array(dimX);
 	for(var i = 0; i < dimX; i++){
 		this.array[i] = new Array(dimY);
