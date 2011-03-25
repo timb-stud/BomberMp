@@ -50,8 +50,11 @@ Session = function(serverUrl, initHandler, msgHandler, userHandler){
 		$.post(url, ajaxMsg, sendHandler, "json");
 	};
 	this.getJoinUrl = function(){
-		var url = window.location.href;
-		url += "?sid=" + sid;
+		var url = window.location.href,
+			expr = /sid\=(\d+)/;
+		if(!expr(url)){
+			url += "?sid=" + sid;
+		}
 		return url;
 	}
 };

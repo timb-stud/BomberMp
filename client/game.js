@@ -13,7 +13,8 @@ var GameSession = {
         }
     },
     initHandler: function(uid, sid){
-        $("#urlBox").attr("value", GameSession.session.getJoinUrl());
+    	var url = GameSession.session.getJoinUrl();
+        $("#urlBox").attr("value", url);
     },
     msgHandler: function(json){
 		if(json.timer){ //isBomb
