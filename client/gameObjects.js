@@ -97,7 +97,7 @@ Bomb.prototype = {
                     this.map.set(new Fire(), leftBoxX, this.boxY)
                     this.radiusLeft++;
                 }
-                if(this.radiusLeft > this.radiusMax || left instanceof SolidWall){
+                if(this.radiusLeft > this.radiusMax || left instanceof SolidWall || left instanceof Bomb){
                     this.leftDone = true;
                 }
             }
@@ -123,7 +123,7 @@ Bomb.prototype = {
                     this.map.set(new Fire(), rightBoxX, this.boxY);
                     this.radiusRight++;
                 }
-                if(this.radiusRight > this.radiusMax || right instanceof SolidWall){
+                if(this.radiusRight > this.radiusMax || right instanceof SolidWall || right instanceof Bomb){
                     this.rightDone = true;
                 }
             }
@@ -149,7 +149,7 @@ Bomb.prototype = {
                     this.map.set(new Fire(), this.boxX, upBoxY);
                     this.radiusUp++;
                 }
-                if(this.radiusUp > this.radiusMax || up instanceof SolidWall){
+                if(this.radiusUp > this.radiusMax || up instanceof SolidWall || up instanceof Bomb){
                     this.upDone = true;
                 }
             }
@@ -175,7 +175,7 @@ Bomb.prototype = {
                     this.map.set(new Fire(), this.boxX, downBoxY);
                     this.radiusDown++;
                 }
-                if(this.radiusDown > this.radiusMax || down instanceof SolidWall){
+                if(this.radiusDown > this.radiusMax || down instanceof SolidWall || down instanceof Bomb){
                     this.downDone = true;
                 }
             }
