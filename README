@@ -1,1 +1,11 @@
-oisdfjsodifjsdiofj
+Supported browsers:
+	Chrome 10.0
+	Firefox 4.0
+	Safari 5.0.4
+	iOS 4.3 Browser
+
+Unsupported browsers:
+	Opera 10 - problems with ajax calls (maybe a jquery 1.4.4 problem)
+	Firefox 3.6 - problems with ajax calls (maybe a jquery 1.4.4 problem)
+	IE8 - no canvas support
+	IE9 - no canvas support
