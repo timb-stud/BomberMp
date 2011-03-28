@@ -1,3 +1,13 @@
+/*
+	author: Tim Bartsch
+	Session framework for creating game or chat sessions.
+*/
+
+/*
+	SessionList:
+		Array of 100 sessions. The position of the session in the array depends on the session id.
+		The session with sid=0 is stored on the first place, session with sid=1 is stored on the second place and so on...
+*/
 var SessionList = {
 	sessions: new Array(100),
 	addSession: function(){
@@ -27,14 +37,13 @@ var SessionList = {
 			}
 		}
 		return -1;
-	},
-	generateSid: function(){
-		min = 1000;
-		max = 9999;
-		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	}
 };
 
+/*
+	Session:
+		represents a session with a sid, a user list and a posibility of sending the users messages.
+*/
 Session = function(sid){
 	this.sid = sid;
 	this.users = [];
@@ -66,6 +75,10 @@ Session = function(sid){
 	};
 };
 
+/*
+	User:
+		represents a user with its user id, response object and message queue.
+*/
 User = function(uid){
 	this.uid = uid;
 	var response = null;
@@ -96,6 +109,15 @@ User = function(uid){
 	};
 };
 
+/*
+	SessionManager:
+		Handles incoming requests for:
+		
+			creating a new session
+			joining into an existing session
+			sending a message
+			make a poll request. (used for long polling)
+*/
 var SessionManager = {
 	newSession: function(){
 		var session = SessionList.addSession();
@@ -153,6 +175,10 @@ var SessionManager = {
 	}
 };
 
+/*
+	http Server:
+		accepts incoming http requests and forwards them to the SessionManager
+*/
 var http = require("http");
 http.createServer(function(req, res){
 	console.log("HTTP START");
@@ -172,6 +198,11 @@ http.createServer(function(req, res){
 
 setInterval(checkUsers, 2000);
 
+/*
+	checkUsers:
+		Checks if users are connected with the server.
+		Removes sessions on users timeouts.
+*/
 function checkUsers(){
 	var sessions = SessionList.sessions;
 	for(var i=0; i < sessions.length; i++){
