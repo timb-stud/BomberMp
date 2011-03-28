@@ -1,6 +1,6 @@
 /*
 	author: Tim Bartsch
-	Session framework for creating game or chat sessions.
+	Node.js session framework for creating game or chat sessions.
 */
 
 /*
@@ -10,6 +10,9 @@
 */
 var SessionList = {
 	sessions: new Array(100),
+	/*
+		Adds a sesion to the list
+	*/
 	addSession: function(){
 		var sid = this.getFreeSid();
 		if(sid >= 0){
@@ -18,11 +21,17 @@ var SessionList = {
 			return session;
 		}
 	},
+	/*
+		returns the session with the corresponding sid
+	*/
 	getSession: function(sid){
 		if(sid >= 0 && sid < this.sessions.length){
 			return this.sessions[sid];
 		}
 	},
+	/*
+		removes the session with the corresponding sid
+	*/
 	removeSession: function(sid){
 		if(sid >= 0 && sid < this.sessions.length){
 			var session = this.sessions[sid];
@@ -30,6 +39,9 @@ var SessionList = {
 			return session;
 		}
 	},
+	/*
+		searches a free postion in the array and returns it
+	*/
 	getFreeSid: function(){
 		for(var i=0; i < this.sessions.length; i++){
 			if(this.sessions[i] == null){
@@ -47,12 +59,18 @@ var SessionList = {
 Session = function(sid){
 	this.sid = sid;
 	this.users = [];
+	/*
+		add an user to the session
+	*/
 	this.addUser= function(){
 		var uid = generateuid();
 		var user = new User(uid);
 		this.users.push(user);
 		return user;
 	};
+	/*
+		returns the user with the corresponding uid
+	*/
 	this.getUser = function(uid){
 		for(var i=0; i < this.users.length; i++){
 			if(this.users[i].uid == uid){
@@ -61,6 +79,9 @@ Session = function(sid){
 		}
 		return null;
 	};
+	/*
+		sends msg to all users except for the user with uid
+	*/
 	this.alertUsers = function(msg, uid){
 		for(var i=0; i < this.users.length; i++){
 			if(this.users[i].uid != uid){
@@ -68,6 +89,9 @@ Session = function(sid){
 			}
 		}
 	};
+	/*
+		generates a new uid
+	*/
 	var generateuid = function(){
 		min = 100;
 		max = 999;
@@ -84,13 +108,22 @@ User = function(uid){
 	var response = null;
 	this.timeoutTime = 0;
 	this.msgQueue = [];
+	/*
+		sets the response object
+	*/
 	this.setResponse = function(resp){
 		response = resp;
 		this.timeoutTime = 0;
 	};
+	/*
+		returns the response object
+	*/
 	this.getResponse = function(){
 		return response;
 	};
+	/*
+		adds the msg to the msg query and tries to send the msg if an response is available
+	*/
 	this.alert = function(msg){
 		this.msgQueue.push(msg);
 		if(response){
@@ -98,6 +131,9 @@ User = function(uid){
 			this.sendMsg(msg);
 		}
 	};
+	/*
+		sends a msg to the user
+	*/
 	this.sendMsg = function(msg){
 		if(response){
 			var json = JSON.stringify({"msg" : msg});
@@ -119,6 +155,9 @@ User = function(uid){
 			make a poll request. (used for long polling)
 */
 var SessionManager = {
+	/*
+		create a new session
+	*/
 	newSession: function(){
 		var session = SessionList.addSession();
 		if(session){
@@ -126,6 +165,9 @@ var SessionManager = {
 			return JSON.stringify({"sid": session.sid, "uid": user.uid});
 		}
 	},
+	/*
+		join an existing session
+	*/
 	joinSession: function(sid){
 		var session = SessionList.getSession(sid);
 		var user = session.addUser();
@@ -134,6 +176,10 @@ var SessionManager = {
 		SessionManager.send(sid, user.uid, msg);
 		return JSON.stringify({"uid": user.uid});
 	},
+	/*
+		handles a poll request
+		used for long polling
+	*/
 	poll: function(sid, uid, res){
 		var session = SessionList.getSession(sid);
 		var user = session.getUser(uid);
@@ -143,11 +189,17 @@ var SessionManager = {
 			user.sendMsg(msg);
 		}
 	},
+	/*
+		sends a msg to all users in a session except for the user with the given uid
+	*/
 	send: function(sid, uid, msg){
 		var session = SessionList.getSession(sid);
 		session.alertUsers(msg, uid);
 		return msg;
 	},
+	/*
+		handles http requests
+	*/
 	handle: function(req, res, chunk){
 		var msg = null;
 		try{
