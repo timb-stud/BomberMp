@@ -180,6 +180,7 @@ Bomb.prototype = {
                 }
             }
             if(this.isExploded()){
+            	document.getElementById('bombExplosion').play();
                 for(var i = this.radiusLeft -1; i > 0; i--){
                     this.map.remove(this.boxX - i, this.boxY)
                 }
