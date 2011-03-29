@@ -1,6 +1,15 @@
+/*
+	author: Tim Bartsch
+*/
+/*
+	GameSession: represents a game session between two players.
+*/
 var GameSession = {
-    url: "http://localhost:8124",
+    url: "http://localhost:8124",	//customize this url to your server settings
     session: null,
+    /*
+    	init: decides if the user is joining a game or creating a new one
+    */
     init: function(){
         this.session = new Session(this.url, this.initHandler, this.msgHandler, this.userHandler);
         var sid = GameSession.getSidFromUrl();
@@ -12,17 +21,23 @@ var GameSession = {
             GameSession.session.create();
         }
     },
+    /*
+    	to be called after the init
+    */
     initHandler: function(uid, sid){
     	var url = GameSession.session.getJoinUrl();
         $("#urlBox").attr("value", url);
     },
+    /*
+    	handles all incoming messages
+    */
     msgHandler: function(json){
 		if(json.timer){ //isBomb
 	    	var bomb = new Bomb(json.boxX, json.boxY, json.timer, json.radiusMax, Game.map);
 	    	Game.pdu.bomb = bomb;
 	    	Game.map.set(bomb, bomb.boxX, bomb.boxY);
 		}else{
-			if(json.mv){
+			if(json.mv){ //is movement
 				switch(json.mv){
 					case "left":
 						Game.pdu.moveLeft();
@@ -38,15 +53,21 @@ var GameSession = {
 						break;
 				}
 			}else{
-				if(json.px){
+				if(json.px){ //is sync
 					Game.pdu.x = json.px;
 					Game.pdu.y = json.py;
 				}
 			}
 		}
     },
+    /*
+    	handles new users
+    */
     userHandler: function(action, uid){
     },
+    /*
+    	returns the sid if there is one in the url
+    */
     getSidFromUrl: function(){
         var params = window.location.search,
          	expr = /sid\=(\d+)/;
@@ -54,6 +75,9 @@ var GameSession = {
             return expr(params)[1];
         }
     },
+    /*
+    	send a movement to the other player
+    */
     sendMovement: function(mv){
     	var json = {
     		'mv': mv
@@ -61,6 +85,9 @@ var GameSession = {
     	var msg = JSON.stringify(json);
 		GameSession.session.send(msg);
     },
+    /*
+    	send a bomb to the other player
+    */
     sendBomb: function(bomb){
 		if(bomb){
 	  		var json = {
@@ -73,6 +100,9 @@ var GameSession = {
 	   		GameSession.session.send(msg);
 		}
     },
+    /*
+    	send a sync to the other player
+    */
     sendSync: function(player){
     	var json = {
     		px: player.x,
@@ -82,14 +112,16 @@ var GameSession = {
     	GameSession.session.send(msg);
     }
 }
-
+/*
+	Game: represents the Bomberman game
+*/
 var Game = {
     ctx: null,
     w: 0,
     h: 0,
     map: null,
     player: null,
-    pdu: null,
+    pdu: null,	//this is the other player
     spawnPoint1: new SpawnPoint(0, 0),
     spawnPoint2: new SpawnPoint(240, 120),
     keyPressed: {
@@ -99,6 +131,9 @@ var Game = {
         right: false,
         bomb: false
     },
+    /*
+    	intit: intializes the Game objects
+    */
     init: function(){
         var canvas = $("#gameCanvas")[0];
         Game.w = canvas.width;
@@ -119,6 +154,9 @@ var Game = {
         setInterval(Game.loop, 30);
         setInterval(Game.sync, 1000);
     },
+    /*
+    	loop: Gameloop which updates and draws the game
+    */
     loop: function(){
         Game.player.update();
         Game.pdu.update();
@@ -155,9 +193,15 @@ var Game = {
         $("#fragsO").html(Game.pdu.frags);
         $("#killsO").html(Game.pdu.kills);
     },
+    /*
+    	sync: sync the game
+    */
     sync: function(){
     	GameSession.sendSync(Game.player);
     },
+    /*
+    	initMaP: creates the maps
+    */
     initMap: function(){
     	Game.map = new Map(Game.w / 20, Game.h / 20);
         
@@ -183,12 +227,42 @@ var Game = {
         Game.map.set(new SolidWall(), 11, 5 );
         
         Game.map.set(new Wall(), 1, 0);
+        Game.map.set(new Wall(), 3, 0);
+        Game.map.set(new Wall(), 4, 0);
+        Game.map.set(new Wall(), 6, 0);
+        Game.map.set(new Wall(), 10, 0);
+        Game.map.set(new Wall(), 12, 0);
+        Game.map.set(new Wall(), 2, 1);
+        Game.map.set(new Wall(), 6, 1);
+        Game.map.set(new Wall(), 8, 1);
         Game.map.set(new Wall(), 1, 2);
+        Game.map.set(new Wall(), 5, 2);
+        Game.map.set(new Wall(), 7, 2);
+        Game.map.set(new Wall(), 3, 2);
+        Game.map.set(new Wall(), 4, 2);
+        Game.map.set(new Wall(), 11, 2);
+        Game.map.set(new Wall(), 8, 3);
+        Game.map.set(new Wall(), 2, 3);
+        Game.map.set(new Wall(), 4, 3);
         Game.map.set(new Wall(), 1, 4);
+        Game.map.set(new Wall(), 4, 4);
+        Game.map.set(new Wall(), 8, 4);
+        Game.map.set(new Wall(), 11, 4);
+        Game.map.set(new Wall(), 0, 5);
+        Game.map.set(new Wall(), 4, 5);
+        Game.map.set(new Wall(), 6, 5);
+        Game.map.set(new Wall(), 10, 5);
         Game.map.set(new Wall(), 1, 6);
+        Game.map.set(new Wall(), 5, 6);
+        Game.map.set(new Wall(), 8, 6);
+        Game.map.set(new Wall(), 10, 6);
+        Game.map.set(new Wall(), 11, 6);
     }
 };
 
+/*
+	onKeyDown: onKeyDown handler
+*/
 function onKeyDown(evt){
 	switch(evt.keyCode){
 		case 32:
@@ -209,6 +283,9 @@ function onKeyDown(evt){
 	}
 }
 
+/*
+	onKeyUp: onKeyUp handler
+*/
 function onKeyUp(evt){
 	switch(evt.keyCode){
 		case 32:
@@ -231,6 +308,5 @@ function onKeyUp(evt){
 
 $(document).keydown(onKeyDown);
 $(document).keyup(onKeyUp);
-
 
 $(document).ready(Game.init);

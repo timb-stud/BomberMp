@@ -93,8 +93,8 @@ Session = function(sid){
 		generates a new uid
 	*/
 	var generateuid = function(){
-		min = 100;
-		max = 999;
+		min = 1000;
+		max = 9999;
 		return( min + parseInt(Math.random() * ( max-min+1 ), 10));
 	};
 };
