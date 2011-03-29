@@ -1,3 +1,9 @@
+/*
+	author: Tim Bartsch, Volkan Goekkaya
+*/
+/*
+	Drawable: a Drawable object with a rectangle shape
+*/
 function Drawable(){
 };
 Drawable.prototype = {
@@ -6,6 +12,9 @@ Drawable.prototype = {
 	w: 20,
 	h: 20,
 	color: "#123456",
+	/*
+		drawRect: draws a rect on the ctx
+	*/
 	drawRect: function(ctx, fillStyle, x, y, w, h){
         ctx.fillStyle = fillStyle;
         ctx.beginPath();
@@ -13,23 +22,35 @@ Drawable.prototype = {
         ctx.closePath();
         ctx.fill();
     },
+    /*
+		draw: the Drawable on the ctx
+	*/
     draw: function(ctx){
         this.drawRect(ctx, this.color, this.x, this.y, this.w, this.h);
     }
 };
 
+/*
+	A destroyable wall
+*/
 var Wall = function(){
 };
 Wall.prototype = {
 	color: "#8B4513"
 };
 
+/*
+	An undestroyable wall
+*/
 function SolidWall(){
 };
 SolidWall.prototype = {
 	color: "#c0c0c0"
 }
 
+/*
+	This is a position where a player can spawn
+*/
 function SpawnPoint(x, y){
     this.x = x;
     this.y = y;
@@ -38,12 +59,18 @@ SpawnPoint.prototype = {
 	color: "#FF7F50"
 };
 
+/*
+	Fire used by the bomb
+*/
 function Fire(){
 };
 Fire.prototype = {
 	color: "#FF0000"
 }
 
+/*
+	Bomb: after the timer runs out the bomb removes all destroyable walls and kills players in its radius 
+*/
 function Bomb(boxX, boxY, timer, radius, map){
     this.boxX = boxX;
     this.boxY = boxY;
@@ -61,6 +88,10 @@ Bomb.prototype = {
 	upDone: false,
 	radiusDown: 1,
 	downDone: false,
+	/*
+		update: looks if the timer is 0. If this is the case the bomb explodes and destroys walls and kills players
+			and also plays a boom sound ;)
+	*/
     update: function(){
         if (this.timer < 1) {
             var leftBoxX = this.boxX - this.radiusLeft,
@@ -199,11 +230,19 @@ Bomb.prototype = {
             this.timer--;
         }
     },
+    /*
+    	returns:
+    				true if the bomb is exploded
+    				false if the bomb is not exploded
+    */
     isExploded: function(){
         return this.leftDone && this.rightDone && this.upDone && this.downDone;
     }
 };
 
+/*
+	Player: represantation of the local player with x and y position on screen
+*/
 function Player(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
@@ -219,6 +258,9 @@ Player.prototype = {
 	bombRadius: 2,
 	bombTimer: 50,
 	move: null,
+	/*
+		Moves the player one box up
+	*/
 	moveUp: function(){
 		var boxX = this.map.toBoxX(this.x),
     		boxY = this.map.toBoxY(this.y);
@@ -227,6 +269,9 @@ Player.prototype = {
 			return true;
 		}
     },
+    /*
+		Moves the player one box down
+	*/
     moveDown: function(){
     	var boxX = this.map.toBoxX(this.x),
     		boxY = this.map.toBoxY(this.y);
@@ -235,6 +280,9 @@ Player.prototype = {
 			return true;
 		}
     },
+    /*
+		Moves the player one box to the left
+	*/
     moveLeft: function(){
     	var boxX = this.map.toBoxX(this.x),
     		boxY = this.map.toBoxY(this.y);
@@ -243,6 +291,9 @@ Player.prototype = {
 			return true;
 		}
     },
+    /*
+		Moves the player one box to the right
+	*/
     moveRight: function(){
     	var boxX = this.map.toBoxX(this.x),
     		boxY = this.map.toBoxY(this.y);
@@ -251,6 +302,9 @@ Player.prototype = {
 			return true;
 		}
     },
+    /*
+		Drops the bomb on the players position
+	*/
     dropBomb: function(){
     	if(!this.bomb){
     		var boxX = this.map.toBoxX(this.x + (this.w / 2)),
@@ -260,6 +314,9 @@ Player.prototype = {
 			return this.bomb;
     	}
     },
+    /*
+    	updated the players movement
+    */
     update: function(){
     	if(this.move){
     		switch(this.move){
@@ -289,6 +346,9 @@ Player.prototype = {
             }
         }
     },
+    /*
+    	updates the pixel Counter, used for movement
+    */
     updatePxCounter: function(){
     	this.pxCounter += this.vMax;
 		if(this.pxCounter >= 20){
@@ -296,6 +356,9 @@ Player.prototype = {
     		this.pxCounter = 0;
     	}
     },
+    /*
+    	Kills this player
+    */
     kill: function(){
     	if(this instanceof Player){
     		this.kills++;
@@ -305,6 +368,9 @@ Player.prototype = {
 };
 Player.prototype.__proto__ = Drawable.prototype;
 
+/*
+	PlayerPdu: representation of the opponten player
+*/
 function PlayerPdu(spawnPoint, map){
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
@@ -312,6 +378,9 @@ function PlayerPdu(spawnPoint, map){
     this.color = "00FF00";
 };
 PlayerPdu.prototype = {
+	/*
+    	Kills this player
+    */
 	kill: function(){
 		this.kills++;
 		this.map.player.frags++;
