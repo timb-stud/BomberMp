@@ -183,9 +183,36 @@ var Game = {
         Game.map.set(new SolidWall(), 11, 5 );
         
         Game.map.set(new Wall(), 1, 0);
+        Game.map.set(new Wall(), 3, 0);
+        Game.map.set(new Wall(), 4, 0);
+        Game.map.set(new Wall(), 6, 0);
+        Game.map.set(new Wall(), 10, 0);
+        Game.map.set(new Wall(), 12, 0);
+        Game.map.set(new Wall(), 2, 1);
+        Game.map.set(new Wall(), 6, 1);
+        Game.map.set(new Wall(), 8, 1);
         Game.map.set(new Wall(), 1, 2);
+        Game.map.set(new Wall(), 5, 2);
+        Game.map.set(new Wall(), 7, 2);
+        Game.map.set(new Wall(), 3, 2);
+        Game.map.set(new Wall(), 4, 2);
+        Game.map.set(new Wall(), 11, 2);
+        Game.map.set(new Wall(), 8, 3);
+        Game.map.set(new Wall(), 2, 3);
+        Game.map.set(new Wall(), 4, 3);
         Game.map.set(new Wall(), 1, 4);
+        Game.map.set(new Wall(), 4, 4);
+        Game.map.set(new Wall(), 8, 4);
+        Game.map.set(new Wall(), 11, 4);
+        Game.map.set(new Wall(), 0, 5);
+        Game.map.set(new Wall(), 4, 5);
+        Game.map.set(new Wall(), 6, 5);
+        Game.map.set(new Wall(), 10, 5);
         Game.map.set(new Wall(), 1, 6);
+        Game.map.set(new Wall(), 5, 6);
+        Game.map.set(new Wall(), 8, 6);
+        Game.map.set(new Wall(), 10, 6);
+        Game.map.set(new Wall(), 11, 6);
     }
 };
 
