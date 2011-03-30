@@ -1,3 +1,26 @@
+How to run?
+
+1. Install node.js
+		http://nodejs.org/
+		http://nodejs.org/dist/node-v0.4.4.tar.gz
+		https://github.com/joyent/node/wiki/Installation
+
+2. Edit game.js 
+		customize the following line to your server settings or use it if you run the game locally
+		
+		url: "http://localhost:8124",
+
+3. Start node.js
+
+	$ node server/sessions.js
+	
+4. Open index.html in your Browser (supported Browsers are listed below)
+
+5. Send the generated url to your friend
+
+6. Play & Have Fun :)
+	
+
 Supported browsers:
 	Chrome 10.0
 	Firefox 4.0
